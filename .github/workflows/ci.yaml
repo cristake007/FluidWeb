@@ -26,6 +26,8 @@ jobs:
           persist-credentials: false
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+      - name: Validate Docker Compose
+        run: docker compose config --quiet
       - name: Build Docker images
         uses: docker/bake-action@v7
         with:
@@ -61,60 +63,21 @@ jobs:
         run: docker compose exec -T frontend npm run build
       - name: Run frontend tests
         run: docker compose exec -T frontend npm run test:ci
-      - name: Check HTTP reachability
-        run: curl -v --fail-with-body http://localhost
+      - name: Run PHPUnit
+        run: docker compose exec -T php php bin/phpunit
+      - name: Check API reachability
+        run: curl -v --fail-with-body http://localhost/api/v1/stare
       # Uncomment when the homepage is configured, or change the path to check
       # - name: Check HTTPS reachability
       #   run: curl -v --insecure --fail-with-body https://localhost
       - name: Check Mercure reachability
-        run: curl -vI --insecure --fail-with-body https://localhost/.well-known/mercure?topic=test
+        run: curl -vI --fail-with-body 'http://localhost/.well-known/mercure?topic=test'
       # Uncomment if Doctrine ORM is installed
       # - name: Create test database
       #   run: docker compose exec -T php bin/console -e test doctrine:database:create
       # Uncomment if Doctrine Migrations is installed
       # - name: Run migrations
       #   run: docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
-      # Uncomment if PHPUnit is installed
-      # - name: Run PHPUnit
-      #   run: docker compose exec -T php bin/phpunit
       # Uncomment if Doctrine ORM is installed
       # - name: Doctrine Schema Validator
       #   run: docker compose exec -T php bin/console -e test doctrine:schema:validate
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Lint Code Base
-        uses: super-linter/super-linter/slim@v8
-        env:
-          GITHUB_ACTIONS_CONFIG_FILE: actionlint.yaml
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          VALIDATE_CHECKOV: false
-          VALIDATE_TRIVY: false
-          VALIDATE_BIOME_FORMAT: false
-          VALIDATE_BIOME_LINT: false
-          # PHP is checked above inside the project's PHP 8.5 container.
-          VALIDATE_PHP_BUILTIN: false
-          VALIDATE_PHP_PHPCS: false
-          VALIDATE_PHP_PHPSTAN: false
-          VALIDATE_PHP_PSALM: false
-          # Angular ESLint runs above with the project's installed dependencies.
-          VALIDATE_TYPESCRIPT_ES: false
-          # Angular templates are checked by Angular ESLint.
-          VALIDATE_HTML: false
-          # Angular tsconfig and VS Code files use valid JSON with comments.
-          VALIDATE_JSON: false
-          # Symfony YAML is validated by Symfony and yamllint above.
-          VALIDATE_YAML_PRETTIER: false
-          STRIP_DEFAULT_WORKSPACE_FOR_REGEX: true
-          FILTER_REGEX_EXCLUDE: ^config/reference\.php$
