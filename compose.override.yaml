@@ -1,6 +1,32 @@
 ---
 # Development environment override
 services:
+  frontend:
+    image: ${IMAGES_PREFIX:-}app-frontend-dev
+    build:
+      context: ./frontend
+      target: development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://localhost:4200')
+          .then((response) => process.exit(response.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    init: true
+    tty: true
+
   php:
     image: ${IMAGES_PREFIX:-}app-php-dev
     build:

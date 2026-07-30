@@ -53,6 +53,12 @@ jobs:
           docker compose exec -T php vendor/bin/phpstan analyse --no-progress --memory-limit=512M
       - name: Check PHP code style
         run: docker compose exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff
+      - name: Check frontend formatting
+        run: docker compose exec -T frontend npm run format:check
+      - name: Build frontend
+        run: docker compose exec -T frontend npm run build
+      - name: Run frontend tests
+        run: docker compose exec -T frontend npm run test:ci
       - name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
       # Uncomment when the homepage is configured, or change the path to check
