@@ -55,6 +55,8 @@ jobs:
         run: docker compose exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff
       - name: Check frontend formatting
         run: docker compose exec -T frontend npm run format:check
+      - name: Lint frontend
+        run: docker compose exec -T frontend npm run lint
       - name: Build frontend
         run: docker compose exec -T frontend npm run build
       - name: Run frontend tests
@@ -106,5 +108,13 @@ jobs:
           VALIDATE_PHP_PHPCS: false
           VALIDATE_PHP_PHPSTAN: false
           VALIDATE_PHP_PSALM: false
+          # Angular ESLint runs above with the project's installed dependencies.
+          VALIDATE_TYPESCRIPT_ES: false
+          # Angular templates are checked by Angular ESLint.
+          VALIDATE_HTML: false
+          # Angular tsconfig and VS Code files use valid JSON with comments.
+          VALIDATE_JSON: false
+          # Symfony YAML is validated by Symfony and yamllint above.
+          VALIDATE_YAML_PRETTIER: false
           STRIP_DEFAULT_WORKSPACE_FOR_REGEX: true
           FILTER_REGEX_EXCLUDE: ^config/reference\.php$
