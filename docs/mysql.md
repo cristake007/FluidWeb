@@ -19,7 +19,7 @@ Change the database image to use MySQL instead of PostgreSQL in `compose.yaml`:
 
 ```diff
  ###> doctrine/doctrine-bundle ###
--    image: postgres:${POSTGRES_VERSION:-16}-alpine
+-    image: postgres:${POSTGRES_VERSION:-18}-alpine
 +    image: mysql:${MYSQL_VERSION:-8.0.32}
      environment:
 -      POSTGRES_DB: ${POSTGRES_DB:-app}
@@ -37,10 +37,10 @@ Change the database image to use MySQL instead of PostgreSQL in `compose.yaml`:
        retries: 5
        start_period: 60s
      volumes:
--      - database_data:/var/lib/postgresql/data:rw
+-      - database_data:/var/lib/postgresql:rw
 +      - database_data:/var/lib/mysql:rw
        # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
--      # - ./docker/db/data:/var/lib/postgresql/data:rw
+-      # - ./docker/db/data:/var/lib/postgresql:rw
 +      # - ./docker/db/data:/var/lib/mysql:rw
  ###< doctrine/doctrine-bundle ###
 ```
