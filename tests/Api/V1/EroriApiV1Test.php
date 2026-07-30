@@ -2,13 +2,11 @@
 
 namespace App\Tests\Api\V1;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
-final class EroriApiV1Test extends WebTestCase
+final class EroriApiV1Test extends TestFunctionalApiV1
 {
     public function testRutaApiInexistentaRespectaContractul(): void
     {
-        $client = static::createClient();
+        $client = $this->creeazaClientCuLimitatorGol();
 
         $client->request('GET', '/api/v1/inexistenta');
 
@@ -22,7 +20,7 @@ final class EroriApiV1Test extends WebTestCase
 
     public function testMetodaNepermisaPastreazaHeaderulAllow(): void
     {
-        $client = static::createClient();
+        $client = $this->creeazaClientCuLimitatorGol();
 
         $client->request('POST', '/api/v1/stare');
 
@@ -37,7 +35,7 @@ final class EroriApiV1Test extends WebTestCase
 
     public function testExceptiaInternaNuExpuneMesajulOriginal(): void
     {
-        $client = static::createClient();
+        $client = $this->creeazaClientCuLimitatorGol();
 
         $client->request('GET', '/api/v1/test/exceptie-interna');
 
@@ -52,7 +50,7 @@ final class EroriApiV1Test extends WebTestCase
 
     public function testRutaNonApiNuPrimesteContractulApi(): void
     {
-        $client = static::createClient();
+        $client = $this->creeazaClientCuLimitatorGol();
 
         $client->request('GET', '/ruta-inexistenta');
 
@@ -62,7 +60,7 @@ final class EroriApiV1Test extends WebTestCase
 
     public function testHeaderulRetryAfterEstePastra(): void
     {
-        $client = static::createClient();
+        $client = $this->creeazaClientCuLimitatorGol();
 
         $client->request('GET', '/api/v1/test/prea-multe-cereri');
 
@@ -71,7 +69,7 @@ final class EroriApiV1Test extends WebTestCase
         self::assertRaspunsEroare([
             'cod' => 429,
             'eroare' => 'prea_multe_cereri',
-            'mesaj' => 'Au fost trimise prea multe cereri. Incercati din nou mai tarziu.',
+            'mesaj' => 'Prea multe cereri. Incercati din nou mai tarziu.',
         ], $client->getResponse()->getContent());
     }
 

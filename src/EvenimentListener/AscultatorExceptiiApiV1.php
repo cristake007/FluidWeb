@@ -22,7 +22,7 @@ final class AscultatorExceptiiApiV1
         405 => ['eroare' => 'metoda_nepermisa', 'mesaj' => 'Metoda HTTP utilizata nu este permisa pentru aceasta resursa.'],
         409 => ['eroare' => 'conflict', 'mesaj' => 'Cererea nu poate fi finalizata din cauza unui conflict.'],
         422 => ['eroare' => 'date_invalide', 'mesaj' => 'Datele trimise nu au putut fi procesate.'],
-        429 => ['eroare' => 'prea_multe_cereri', 'mesaj' => 'Au fost trimise prea multe cereri. Incercati din nou mai tarziu.'],
+        429 => ['eroare' => 'prea_multe_cereri', 'mesaj' => 'Prea multe cereri. Incercati din nou mai tarziu.'],
         500 => ['eroare' => 'eroare_interna', 'mesaj' => 'A aparut o eroare interna.'],
         503 => ['eroare' => 'serviciu_indisponibil', 'mesaj' => 'Serviciul este temporar indisponibil.'],
     ];
