@@ -48,6 +48,7 @@ final class AutentificareWebTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'text/html; charset=UTF-8');
+        self::assertCount(1, $pagina->filter('meta[name="viewport"][content="width=device-width, initial-scale=1"]'));
         self::assertCount(1, $pagina->filter('body.layout-securitate'));
         self::assertCount(1, $pagina->filter('main.pagina-autentificare[data-layout="securitate"]'));
         self::assertCount(1, $pagina->filter('.pagina-autentificare__imagine img[src^="/build/images/"]'));
@@ -60,9 +61,12 @@ final class AutentificareWebTest extends WebTestCase
         self::assertCount(1, $pagina->filter('input[name="email"][autocomplete="username"]'));
         self::assertCount(1, $pagina->filter('input[name="parola"][autocomplete="current-password"]'));
         self::assertCount(1, $pagina->filter('input[name="_csrf_token"]'));
-        self::assertCount(1, $pagina->filter('form[action="/autentificare"][method="post"][novalidate][data-controller="validare-autentificare"]'));
-        self::assertCount(2, $pagina->filter('input[required][data-validare-autentificare-target="camp"]'));
-        self::assertCount(2, $pagina->filter('.invalid-feedback'));
+        self::assertCount(1, $pagina->filter('form[action="/autentificare"][method="post"][novalidate][data-controller="validare-formular"]'));
+        self::assertCount(2, $pagina->filter('input[required][data-validare-formular-target="camp"]'));
+        self::assertCount(1, $pagina->filter('#eroare-email.invalid-feedback[aria-live="polite"]'));
+        self::assertCount(1, $pagina->filter('#eroare-parola.invalid-feedback[aria-live="polite"]'));
+        self::assertSelectorTextSame('#eroare-email', 'Introduceți adresa de email.');
+        self::assertSelectorTextSame('#eroare-parola', 'Introduceți parola.');
     }
 
     public function testPaginaDeAutentificareNuContineShellSauResurseExterne(): void
@@ -70,6 +74,7 @@ final class AutentificareWebTest extends WebTestCase
         $pagina = $this->client->request('GET', '/autentificare');
 
         self::assertCount(0, $pagina->filter('.navbar, .sidebar, [data-shell-aplicatie]'));
+        self::assertCount(0, $pagina->filter('a'));
 
         foreach ($pagina->filter('[src], [href]') as $resursa) {
             $adresa = $resursa->hasAttribute('src')
