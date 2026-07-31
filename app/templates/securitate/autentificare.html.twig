@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Autentificare | FluidWeb{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Autentificare</h1>
+
+        {% if eroare_autentificare %}
+            <p role="alert">{{ eroare_autentificare.messageKey|trans(eroare_autentificare.messageData, 'security', 'ro') }}</p>
+        {% endif %}
+
+        <form action="{{ path('autentificare') }}" method="post">
+            <div>
+                <label for="email">Adresă de email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ ultima_adresa_email }}"
+                    autocomplete="username"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div>
+                <label for="parola">Parolă</label>
+                <input
+                    type="password"
+                    id="parola"
+                    name="parola"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('autentificare') }}">
+            <button type="submit">Autentificare</button>
+        </form>
+    </main>
+{% endblock %}

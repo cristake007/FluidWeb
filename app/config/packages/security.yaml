@@ -19,30 +19,34 @@ security:
             lazy: true
             provider: utilizatori
             user_checker: App\Security\VerificatorUtilizator
-            entry_point: App\Security\PunctIntrareApiV1
-            json_login:
-                check_path: api_v1_autentificare
-                username_path: email
-                password_path: parola
-                success_handler: App\Security\SuccesAutentificareHandler
-                failure_handler: App\Security\EsecAutentificareHandler
+            entry_point: App\Security\PunctIntrareAplicatie
+            form_login:
+                login_path: autentificare
+                check_path: autentificare
+                username_parameter: email
+                password_parameter: parola
+                enable_csrf: true
+                csrf_token_id: autentificare
+                default_target_path: pagina_principala
             login_throttling:
                 max_attempts: 5
                 interval: '15 minutes'
                 cache_pool: cache.autentificare_limiter
             logout:
-                path: api_v1_deconectare
+                path: deconectare
+                target: autentificare
                 invalidate_session: true
-                enable_csrf: false
+                enable_csrf: true
+                csrf_token_id: deconectare
 
     # Note: Only the *first* matching rule is applied
     access_control:
         - { path: ^/api/v1/stare$, methods: [GET], roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/token-csrf$, methods: [GET], roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/autentificare$, methods: [POST], roles: PUBLIC_ACCESS }
         # Rutele exista exclusiv in mediul test pentru infrastructura API v1.
-        - { path: ^/api/v1/test/(exceptie-interna|prea-multe-cereri|log-corelare)$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/test/(exceptie-interna|prea-multe-cereri|resursa-negasita|log-corelare)$, roles: PUBLIC_ACCESS }
+        - { route: ^autentificare$, roles: PUBLIC_ACCESS }
         - { route: ^api_v1_, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

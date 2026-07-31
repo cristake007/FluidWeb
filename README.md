@@ -11,6 +11,8 @@ docker/    Runtime configuration
 
 The application uses Twig, AssetMapper, ImportMap, Stimulus and Symfony UX Turbo. Browser assets are served locally; Node.js is not required.
 
+The server-rendered web interface uses Symfony form authentication and sessions. The former Angular JSON authentication endpoints have been removed. `/api/v1` remains available for future integrations, but integration authentication is not implemented yet; it will use API keys or another dedicated mechanism, not user passwords or the web login endpoint.
+
 ## Development
 
 Start the development profile:

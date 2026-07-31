@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FluidWeb{% endblock %}
+
+{% block body %}
+    <h1>FluidWeb</h1>
+    <p>Nume: {{ utilizator.prenume }} {{ utilizator.nume }}</p>
+    <p>Adresă de email: {{ utilizator.email }}</p>
+
+    <form action="{{ path('deconectare') }}" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('deconectare') }}">
+        <button type="submit">Deconectare</button>
+    </form>
+{% endblock %}

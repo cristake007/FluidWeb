@@ -71,6 +71,7 @@ final class JurnalCereriTehniceApiV1Test extends TestFunctionalApiV1
     public function testPaginaNonApiNuProduceJurnalTehnic(): void
     {
         $client = $this->creeazaClientCuLimitatorGol();
+        $this->autentificaClientPentruRutaWeb($client);
         $handler = $this->obtineHandlerTest();
         $handler->clear();
 

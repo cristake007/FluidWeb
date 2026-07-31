@@ -26,6 +26,7 @@ final class ProcesatorIdCorelareApiV1Test extends TestFunctionalApiV1
     public function testLogulNonApiNuContineIdCorelare(): void
     {
         $client = $this->creeazaClientCuLimitatorGol();
+        $this->autentificaClientPentruRutaWeb($client);
         $handler = $this->obtineHandlerTest();
         $handler->clear();
 

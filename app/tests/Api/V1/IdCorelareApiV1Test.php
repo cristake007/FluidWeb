@@ -60,6 +60,7 @@ final class IdCorelareApiV1Test extends TestFunctionalApiV1
     public function testPaginaNonApiNuAreIdCorelare(): void
     {
         $client = $this->creeazaClientCuLimitatorGol();
+        $this->autentificaClientPentruRutaWeb($client);
 
         $client->request('GET', '/pagina-test');
 

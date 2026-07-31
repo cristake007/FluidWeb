@@ -29,6 +29,7 @@ final class LimitareCereriApiV1Test extends TestFunctionalApiV1
     public function testRutaNonApiNuEsteLimitata(): void
     {
         $client = $this->creeazaClientCuLimitatorGol();
+        $this->autentificaClientPentruRutaWeb($client);
         $server = ['REMOTE_ADDR' => '192.0.2.11'];
 
         for ($cerere = 0; $cerere < 3; ++$cerere) {

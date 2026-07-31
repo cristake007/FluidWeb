@@ -28,11 +28,6 @@ final class AscultatorLimitareCereriApiV1
             return;
         }
 
-        // Autentificarea are propriul limitator Symfony, cu cheie pe utilizator si IP.
-        if ('api_v1_autentificare' === $cerere->attributes->get('_route')) {
-            return;
-        }
-
         $cheie = $cerere->getClientIp() ?? 'ip_necunoscut';
         $rezultat = $this->fabricaLimitatorApiV1->create($cheie)->consume();
 
