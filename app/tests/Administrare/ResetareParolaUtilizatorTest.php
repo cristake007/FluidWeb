@@ -48,8 +48,12 @@ final class ResetareParolaUtilizatorTest extends WebTestCase
         $formular = $pagina->filter(sprintf('form[action="%s"]', $url))->form();
         $this->client->submit($formular);
 
+        self::assertResponseRedirects('/administrare/utilizatori/parola-resetata', Response::HTTP_SEE_OTHER);
+        $this->client->followRedirect();
         self::assertResponseIsSuccessful();
-        self::assertRouteSame('administrare_utilizator_resetare_parola');
+        self::assertRouteSame('administrare_utilizator_parola_resetata');
+        self::assertSame('GET', $this->client->getRequest()->getMethod());
+        self::assertSame('/administrare/utilizatori/parola-resetata', $this->client->getRequest()->getPathInfo());
     }
 
     public function testCerereaGetEsteRespinsa(): void
@@ -90,7 +94,7 @@ final class ResetareParolaUtilizatorTest extends WebTestCase
         $hashInitial = $utilizator->getPassword();
         $this->client->loginUser($administrator);
 
-        $raspuns = $this->trimiteResetareaParolei($id);
+        $raspuns = $this->trimiteResetareaParoleiSiUrmeazaRedirectul($id);
         $parola = trim($raspuns->filter('[data-parola-generata]')->text());
 
         $this->managerEntitati->clear();
@@ -115,35 +119,52 @@ final class ResetareParolaUtilizatorTest extends WebTestCase
         self::assertResponseIsSuccessful();
     }
 
-    public function testParolaEsteAfisataNumaiInRaspunsulImediat(): void
+    public function testGetulDedicatAfiseazaParolaODataIarRefreshulNuOMaiAfiseaza(): void
     {
         $administrator = $this->creeazaUtilizator('admin@example.com', ['ROLE_ADMIN']);
         $utilizator = $this->creeazaUtilizator('utilizator@example.com', []);
         $this->client->loginUser($administrator);
 
-        $raspuns = $this->trimiteResetareaParolei($this->idUtilizator($utilizator));
+        $raspuns = $this->trimiteResetareaParoleiSiUrmeazaRedirectul($this->idUtilizator($utilizator));
         $parola = trim($raspuns->filter('[data-parola-generata]')->text());
 
+        self::assertRouteSame('administrare_utilizator_parola_resetata');
         self::assertSelectorTextSame('h1', 'Parolă resetată');
         self::assertSelectorTextContains('.alert', 'Copiați parola acum. Nu va mai fi afișată.');
         self::assertStringContainsString('no-store', (string) $this->client->getResponse()->headers->get('cache-control'));
+        self::assertStringContainsString('private', (string) $this->client->getResponse()->headers->get('cache-control'));
+        self::assertCount(1, $raspuns->filter('meta[name="turbo-cache-control"][content="no-cache"]'));
         self::assertStringNotContainsString($parola, serialize($this->client->getRequest()->getSession()->all()));
 
-        $paginaUrmatoare = $this->client->request('GET', '/administrare/utilizatori');
+        $paginaRefresh = $this->client->request('GET', '/administrare/utilizatori/parola-resetata');
 
-        self::assertResponseIsSuccessful();
-        self::assertCount(0, $paginaUrmatoare->filter('[data-parola-generata]'));
+        self::assertResponseRedirects('/administrare/utilizatori');
+        self::assertCount(0, $paginaRefresh->filter('[data-parola-generata]'));
         self::assertStringNotContainsString($parola, (string) $this->client->getResponse()->getContent());
     }
 
-    private function trimiteResetareaParolei(int $idUtilizator): \Symfony\Component\DomCrawler\Crawler
+    public function testAccesulDirectLaGetFaraParolaTemporaraRedirectioneazaLaLista(): void
+    {
+        $administrator = $this->creeazaUtilizator('admin@example.com', ['ROLE_ADMIN']);
+        $this->client->loginUser($administrator);
+
+        $pagina = $this->client->request('GET', '/administrare/utilizatori/parola-resetata');
+
+        self::assertResponseRedirects('/administrare/utilizatori');
+        self::assertCount(0, $pagina->filter('[data-parola-generata]'));
+    }
+
+    private function trimiteResetareaParoleiSiUrmeazaRedirectul(int $idUtilizator): \Symfony\Component\DomCrawler\Crawler
     {
         $pagina = $this->client->request('GET', '/administrare/utilizatori');
         $formular = $pagina
             ->filter(sprintf('form[action="/administrare/utilizatori/%d/resetare-parola"]', $idUtilizator))
             ->form();
 
-        return $this->client->submit($formular);
+        $this->client->submit($formular);
+        self::assertResponseRedirects('/administrare/utilizatori/parola-resetata', Response::HTTP_SEE_OTHER);
+
+        return $this->client->followRedirect();
     }
 
     /** @param list<string> $roluri */

@@ -86,9 +86,11 @@ final class ShellTurboTest extends WebTestCase
         ));
         self::assertCount(1, $formularResetare);
 
-        $paginaParola = $this->client->submit($formularResetare->form(), [], [
+        $this->client->submit($formularResetare->form(), [], [
             'HTTP_TURBO_FRAME' => self::ID_CADRU,
         ]);
+        self::assertResponseRedirects('/administrare/utilizatori/parola-resetata', Response::HTTP_SEE_OTHER);
+        $paginaParola = $this->client->followRedirect();
         self::assertResponseIsSuccessful();
         self::assertCount(1, $paginaParola->filter($this->selectorCadru().' [data-parola-generata]'));
         self::assertCount(1, $paginaParola->filter('meta[name="turbo-cache-control"][content="no-cache"]'));

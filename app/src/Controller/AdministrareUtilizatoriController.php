@@ -20,6 +20,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 final class AdministrareUtilizatoriController extends AbstractController
 {
+    private const CHEIE_PAROLA_RESETATA = 'parola_utilizator_resetata';
+
     #[Route('/administrare/utilizatori', name: 'administrare_utilizatori', methods: ['GET'])]
     public function listeaza(UtilizatorRepository $utilizatorRepository): Response
     {
@@ -159,6 +161,23 @@ final class AdministrareUtilizatoriController extends AbstractController
         $parola = $generatorParola->genereaza();
         $utilizator->setParola($hasherParola->hashPassword($utilizator, $parola));
         $managerEntitati->flush();
+
+        $request->getSession()->set(self::CHEIE_PAROLA_RESETATA, $parola);
+        unset($parola);
+
+        return $this->redirectToRoute(
+            'administrare_utilizator_parola_resetata',
+            status: Response::HTTP_SEE_OTHER,
+        );
+    }
+
+    #[Route('/administrare/utilizatori/parola-resetata', name: 'administrare_utilizator_parola_resetata', methods: ['GET'])]
+    public function afiseazaParolaResetata(Request $request): Response
+    {
+        $parola = $request->getSession()->remove(self::CHEIE_PAROLA_RESETATA);
+        if (!is_string($parola) || '' === $parola) {
+            return $this->redirectToRoute('administrare_utilizatori');
+        }
 
         $raspuns = $this->render('administrare/parola_utilizator_nou.html.twig', [
             'parola' => $parola,
