@@ -4,10 +4,10 @@ namespace App\Tests\Api\V1;
 
 use App\Entity\Utilizator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class AutentificareApiV1Test extends TestFunctionalApiV1
 {

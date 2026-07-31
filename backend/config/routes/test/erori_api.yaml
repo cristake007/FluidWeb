@@ -21,3 +21,7 @@ pagina_test:
 pagina_test_log_corelare:
     path: /pagina-test/log-corelare
     controller: App\Tests\Controller\PaginaTestController::scrieLog
+
+api_v1_test_autorizare:
+    path: /api/v1/test/autorizare
+    controller: App\Tests\Controller\Api\V1\ControlerAutorizareFunctionala::verificaAccesul

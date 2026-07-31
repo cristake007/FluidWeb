@@ -35,3 +35,7 @@ when@test:
         App\Tests\Controller\PaginaTestController:
             autowire: true
             tags: ['controller.service_arguments']
+
+        App\Tests\Controller\Api\V1\ControlerAutorizareFunctionala:
+            autowire: true
+            tags: ['controller.service_arguments']

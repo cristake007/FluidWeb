@@ -40,8 +40,9 @@ security:
         - { path: ^/api/v1/stare$, methods: [GET], roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/token-csrf$, methods: [GET], roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/autentificare$, methods: [POST], roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/utilizator-curent$, methods: [GET], roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/v1/deconectare$, methods: [POST], roles: IS_AUTHENTICATED_FULLY }
+        # Rutele exista exclusiv in mediul test pentru infrastructura API v1.
+        - { path: ^/api/v1/test/(exceptie-interna|prea-multe-cereri|log-corelare)$, roles: PUBLIC_ACCESS }
+        - { route: ^api_v1_, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

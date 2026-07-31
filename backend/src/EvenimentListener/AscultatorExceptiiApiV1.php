@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[AsEventListener(event: KernelEvents::EXCEPTION)]
 final class AscultatorExceptiiApiV1
@@ -34,7 +35,9 @@ final class AscultatorExceptiiApiV1
         }
 
         $exceptie = $eveniment->getThrowable();
-        $cod = $exceptie instanceof HttpExceptionInterface ? $exceptie->getStatusCode() : 500;
+        $cod = $exceptie instanceof AccessDeniedException
+            ? 403
+            : ($exceptie instanceof HttpExceptionInterface ? $exceptie->getStatusCode() : 500);
 
         if (in_array($cod, [301, 302, 307, 308], true)) {
             return;
