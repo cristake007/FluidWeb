@@ -10,12 +10,16 @@
     </button>
     <div class="dropdown-menu dropdown-menu-end">
         {% if is_granted('ROLE_ADMIN') %}
-            <a class="dropdown-item" href="{{ path('administrare') }}">
+            <a
+                class="dropdown-item"
+                href="{{ path('administrare') }}"
+                data-turbo-frame="continut-aplicatie"
+            >
                 <i class="ti ti-settings icon dropdown-item-icon" aria-hidden="true"></i>
                 Administrare
             </a>
         {% endif %}
-        <form action="{{ path('deconectare') }}" method="post">
+        <form action="{{ path('deconectare') }}" method="post" data-turbo="false">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('deconectare') }}">
             <button class="dropdown-item" type="submit">
                 <i class="ti ti-logout icon dropdown-item-icon" aria-hidden="true"></i>

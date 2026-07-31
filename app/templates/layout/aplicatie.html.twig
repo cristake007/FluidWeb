@@ -13,7 +13,9 @@
         {% include 'interfata/_bara_laterala.html.twig' %}
 
         <main class="shell-aplicatie__continut" id="continut-principal">
-            {% block continut_aplicatie %}{% endblock %}
+            <turbo-frame id="continut-aplicatie" data-turbo-action="advance">
+                {% block continut_aplicatie %}{% endblock %}
+            </turbo-frame>
         </main>
     </div>
 {% endblock %}

@@ -6,6 +6,7 @@
                 <a
                     class="nav-link bara-laterala__legatura{{ este_activa ? ' active' : '' }}"
                     href="{{ path(intrare.ruta) }}"
+                    data-turbo-frame="continut-aplicatie"
                     {% if este_activa %}aria-current="page"{% endif %}
                     aria-label="{{ intrare.eticheta }}"
                     title="{{ intrare.eticheta }}"

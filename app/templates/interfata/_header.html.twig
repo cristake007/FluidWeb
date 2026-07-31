@@ -11,7 +11,12 @@
         >
             <i class="ti ti-menu-2 icon" aria-hidden="true"></i>
         </button>
-        <a class="header-aplicatie__brand" href="{{ path('pagina_principala') }}" aria-label="FluidWeb – pagina principală">
+        <a
+            class="header-aplicatie__brand"
+            href="{{ path('pagina_principala') }}"
+            data-turbo-frame="continut-aplicatie"
+            aria-label="FluidWeb – pagina principală"
+        >
             <span class="header-aplicatie__brand-extins">FluidWeb</span>
             <span class="header-aplicatie__brand-restrans" aria-hidden="true">FW</span>
         </a>

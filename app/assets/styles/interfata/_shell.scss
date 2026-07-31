@@ -28,6 +28,10 @@ $culoare-activa: #d41131;
         margin-left: var(--latime-bara-laterala);
         padding: 1.5rem;
         transition: width $durata-shell ease, margin-left $durata-shell ease;
+
+        > turbo-frame {
+            display: block;
+        }
     }
 
     &--restransa {

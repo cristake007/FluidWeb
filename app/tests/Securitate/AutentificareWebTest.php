@@ -62,7 +62,7 @@ final class AutentificareWebTest extends WebTestCase
         self::assertCount(1, $pagina->filter('input[name="email"][autocomplete="username"]'));
         self::assertCount(1, $pagina->filter('input[name="parola"][autocomplete="current-password"]'));
         self::assertCount(1, $pagina->filter('input[name="_csrf_token"]'));
-        self::assertCount(1, $pagina->filter('form[action="/autentificare"][method="post"][novalidate][data-controller="validare-formular"]'));
+        self::assertCount(1, $pagina->filter('form[action="/autentificare"][method="post"][novalidate][data-turbo="false"][data-controller="validare-formular"]'));
         self::assertCount(2, $pagina->filter('input[required][data-validare-formular-target="camp"]'));
         self::assertCount(1, $pagina->filter('#eroare-email.invalid-feedback[aria-live="polite"]'));
         self::assertCount(1, $pagina->filter('#eroare-parola.invalid-feedback[aria-live="polite"]'));
@@ -163,7 +163,7 @@ final class AutentificareWebTest extends WebTestCase
         self::assertCount(1, $pagina->filter('.bara-laterala__navigatie .nav-link.active[aria-current="page"][aria-label="Panou de control"][href="/"]'));
         self::assertSelectorTextSame('.bara-laterala__navigatie .nav-link.active', 'Panou de control');
         self::assertCount(0, $pagina->filter('.shell-aplicatie__continut .container-xl'));
-        self::assertCount(1, $pagina->filter('.shell-aplicatie__continut > .page-title'));
+        self::assertCount(1, $pagina->filter('.shell-aplicatie__continut > turbo-frame > .page-title'));
     }
 
     public function testShellulContineControaleleStimulusPentruRestrangere(): void

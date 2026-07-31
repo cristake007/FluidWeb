@@ -2,6 +2,8 @@
 
 {% block clasa_body %}layout-securitate{% endblock %}
 
+{% block turbo %}{{ turbo_page_requires_reload() }}{% endblock %}
+
 {% block body %}
     <main class="pagina-autentificare" data-layout="securitate">
         <section class="pagina-autentificare__panou" aria-labelledby="titlu-autentificare">

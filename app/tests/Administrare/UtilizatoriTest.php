@@ -58,6 +58,9 @@ final class UtilizatoriTest extends WebTestCase
         self::assertCount(7, $pagina->filter('table thead th'));
         self::assertSelectorTextContains('table thead', 'Acțiuni');
         self::assertCount(2, $pagina->filter('table tbody a.btn.btn-ghost-primary.btn-sm.px-2[title="Editează"] .ti.ti-edit'));
+        self::assertCount(2, $pagina->filter('table tbody button[data-bs-toggle="modal"][title="Resetează parola"] .ti.ti-key'));
+        self::assertCount(2, $pagina->filter('.modal form.modal-content[method="post"]:not([data-turbo="false"]) button[type="submit"] .ti.ti-key'));
+        self::assertCount(2, $pagina->filter('.modal form input[name="_csrf_token"][value]:not([value=""])'));
         self::assertGreaterThanOrEqual(4, $pagina->filter('table .badge')->count());
     }
 

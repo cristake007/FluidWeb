@@ -20,6 +20,7 @@
     <form
         action="{{ path('autentificare') }}"
         method="post"
+        data-turbo="false"
         data-controller="validare-formular"
         data-action="submit->validare-formular#valideaza"
         novalidate

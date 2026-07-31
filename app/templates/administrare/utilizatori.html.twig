@@ -9,7 +9,7 @@
                 <div class="col">
                     <ol class="breadcrumb breadcrumb-arrows align-items-center mb-0" aria-label="Navigare ierarhică">
                         <li class="breadcrumb-item d-flex align-items-center">
-                            <a class="h3 fw-normal mb-0" href="{{ path('administrare') }}">Administrare</a>
+                            <a class="h3 fw-normal mb-0" href="{{ path('administrare') }}" data-turbo-action="advance">Administrare</a>
                         </li>
                         <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
                             <h1 class="h3 mb-0">Utilizatori</h1>
@@ -17,7 +17,7 @@
                     </ol>
                 </div>
                 <div class="col-auto ms-auto d-print-none">
-                    <a class="btn btn-primary btn-sm" href="{{ path('administrare_utilizator_nou') }}">
+                    <a class="btn btn-primary btn-sm" href="{{ path('administrare_utilizator_nou') }}" data-turbo-action="advance">
                         <i class="ti ti-user-plus me-1" aria-hidden="true"></i>
                         Utilizator nou
                     </a>
@@ -68,14 +68,27 @@
                                     <td class="text-secondary text-nowrap">{{ utilizator.creatLa|date('d.m.Y H:i') }}</td>
                                     <td class="text-secondary text-nowrap">{{ utilizator.actualizatLa|date('d.m.Y H:i') }}</td>
                                     <td>
-                                        <a
-                                            class="btn btn-ghost-primary btn-sm px-2"
-                                            href="{{ path('administrare_utilizator_editeaza', {id: utilizator.id}) }}"
-                                            aria-label="Editează {{ utilizator.prenume }} {{ utilizator.nume }}"
-                                            title="Editează"
-                                        >
-                                            <i class="ti ti-edit" aria-hidden="true"></i>
-                                        </a>
+                                        <div class="btn-list flex-nowrap">
+                                            <a
+                                                class="btn btn-ghost-primary btn-sm px-2"
+                                                href="{{ path('administrare_utilizator_editeaza', {id: utilizator.id}) }}"
+                                                data-turbo-action="advance"
+                                                aria-label="Editează {{ utilizator.prenume }} {{ utilizator.nume }}"
+                                                title="Editează"
+                                            >
+                                                <i class="ti ti-edit" aria-hidden="true"></i>
+                                            </a>
+                                            <button
+                                                class="btn btn-ghost-warning btn-sm px-2"
+                                                type="button"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#resetare-parola-{{ utilizator.id }}"
+                                                aria-label="Resetează parola pentru {{ utilizator.prenume }} {{ utilizator.nume }}"
+                                                title="Resetează parola"
+                                            >
+                                                <i class="ti ti-key" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             {% else %}
@@ -87,6 +100,47 @@
                     </table>
                 </div>
             </div>
+
+            {% for utilizator in utilizatori %}
+                <div
+                    class="modal modal-blur fade"
+                    id="resetare-parola-{{ utilizator.id }}"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="titlu-resetare-parola-{{ utilizator.id }}"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                        <form
+                            class="modal-content"
+                            method="post"
+                            action="{{ path('administrare_utilizator_resetare_parola', {id: utilizator.id}) }}"
+                        >
+                            <div class="modal-header">
+                                <h2 class="modal-title" id="titlu-resetare-parola-{{ utilizator.id }}">Resetează parola</h2>
+                                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Închide"></button>
+                            </div>
+                            <div class="modal-body">
+                                Sigur doriți să resetați parola utilizatorului
+                                <strong>{{ utilizator.prenume }} {{ utilizator.nume }}</strong>?
+                                Parola actuală nu va mai putea fi folosită.
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-link" type="button" data-bs-dismiss="modal">Anulează</button>
+                                <input
+                                    type="hidden"
+                                    name="_csrf_token"
+                                    value="{{ csrf_token('resetare_parola_utilizator_' ~ utilizator.id) }}"
+                                >
+                                <button class="btn btn-warning" type="submit" data-bs-dismiss="modal">
+                                    <i class="ti ti-key me-1" aria-hidden="true"></i>
+                                    Resetează parola
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

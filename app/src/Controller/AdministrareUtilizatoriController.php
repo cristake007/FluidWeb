@@ -138,4 +138,35 @@ final class AdministrareUtilizatoriController extends AbstractController
             'utilizator' => $utilizator,
         ]);
     }
+
+    #[Route('/administrare/utilizatori/{id}/resetare-parola', name: 'administrare_utilizator_resetare_parola', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function reseteazaParola(
+        Utilizator $utilizator,
+        Request $request,
+        EntityManagerInterface $managerEntitati,
+        GeneratorParolaInitiala $generatorParola,
+        UserPasswordHasherInterface $hasherParola,
+    ): Response {
+        $idUtilizator = $utilizator->getId();
+        if (null === $idUtilizator) {
+            throw new \LogicException('Utilizatorul trebuie să fie salvat înainte de resetarea parolei.');
+        }
+
+        if (!$this->isCsrfTokenValid('resetare_parola_utilizator_'.$idUtilizator, $request->request->getString('_csrf_token'))) {
+            throw $this->createAccessDeniedException('Tokenul CSRF pentru resetarea parolei este invalid.');
+        }
+
+        $parola = $generatorParola->genereaza();
+        $utilizator->setParola($hasherParola->hashPassword($utilizator, $parola));
+        $managerEntitati->flush();
+
+        $raspuns = $this->render('administrare/parola_utilizator_nou.html.twig', [
+            'parola' => $parola,
+            'titlu' => 'Parolă resetată',
+        ]);
+        $raspuns->headers->set('Cache-Control', 'no-store, private');
+        unset($parola);
+
+        return $raspuns;
+    }
 }

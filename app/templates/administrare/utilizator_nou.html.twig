@@ -10,10 +10,10 @@
                 <div class="col">
                     <ol class="breadcrumb breadcrumb-arrows align-items-center mb-0" aria-label="Navigare ierarhică">
                         <li class="breadcrumb-item d-flex align-items-center">
-                            <a class="h3 fw-normal mb-0" href="{{ path('administrare') }}">Administrare</a>
+                            <a class="h3 fw-normal mb-0" href="{{ path('administrare') }}" data-turbo-action="advance">Administrare</a>
                         </li>
                         <li class="breadcrumb-item d-flex align-items-center">
-                            <a class="h3 fw-normal mb-0" href="{{ path('administrare_utilizatori') }}">Utilizatori</a>
+                            <a class="h3 fw-normal mb-0" href="{{ path('administrare_utilizatori') }}" data-turbo-action="advance">Utilizatori</a>
                         </li>
                         <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
                             <h1 class="h3 mb-0">Utilizator nou</h1>
@@ -29,7 +29,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="card">
-                        {{ form_start(formular, {attr: {novalidate: 'novalidate'}}) }}
+                        {{ form_start(formular, {attr: {novalidate: 'novalidate', 'data-turbo-action': 'advance'}}) }}
                             <div class="card-body">
                                 {{ form_row(formular.prenume) }}
                                 {{ form_row(formular.nume) }}
@@ -37,7 +37,7 @@
                                 {{ form_row(formular.administrator) }}
                             </div>
                             <div class="card-footer text-end">
-                                <a class="btn btn-link btn-sm text-danger" href="{{ path('administrare_utilizatori') }}">Anulează</a>
+                                <a class="btn btn-link btn-sm text-danger" href="{{ path('administrare_utilizatori') }}" data-turbo-action="advance">Anulează</a>
                                 <button class="btn btn-primary btn-sm" type="submit">
                                     <i class="ti ti-user-plus me-1" aria-hidden="true"></i>
                                     Creează utilizatorul

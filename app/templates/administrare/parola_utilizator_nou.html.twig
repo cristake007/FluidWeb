@@ -1,6 +1,10 @@
 {% extends 'layout/aplicatie.html.twig' %}
 
-{% block title %}Utilizator creat | FluidWeb{% endblock %}
+{% set titlu_pagina = titlu|default('Utilizator creat') %}
+
+{% block turbo %}{{ turbo_exempts_page_from_cache() }}{% endblock %}
+
+{% block title %}{{ titlu_pagina }} | FluidWeb{% endblock %}
 
 {% block continut_aplicatie %}
     <div class="page-header d-print-none">
@@ -9,13 +13,13 @@
                 <div class="col">
                     <ol class="breadcrumb breadcrumb-arrows align-items-center mb-0" aria-label="Navigare ierarhică">
                         <li class="breadcrumb-item d-flex align-items-center">
-                            <a class="h3 fw-normal mb-0" href="{{ path('administrare') }}">Administrare</a>
+                            <a class="h3 fw-normal mb-0" href="{{ path('administrare') }}" data-turbo-action="advance">Administrare</a>
                         </li>
                         <li class="breadcrumb-item d-flex align-items-center">
-                            <a class="h3 fw-normal mb-0" href="{{ path('administrare_utilizatori') }}">Utilizatori</a>
+                            <a class="h3 fw-normal mb-0" href="{{ path('administrare_utilizatori') }}" data-turbo-action="advance">Utilizatori</a>
                         </li>
                         <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
-                            <h1 class="h3 mb-0">Utilizator creat</h1>
+                            <h1 class="h3 mb-0">{{ titlu_pagina }}</h1>
                         </li>
                     </ol>
                 </div>
@@ -58,7 +62,7 @@
                                 </div>
                             </div>
 
-                            <a class="btn btn-primary" href="{{ path('administrare_utilizatori') }}">Înapoi la utilizatori</a>
+                            <a class="btn btn-primary" href="{{ path('administrare_utilizatori') }}" data-turbo-action="advance">Înapoi la utilizatori</a>
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,11 @@
         <div class="container-xl">
             <div class="row row-cards">
                 <div class="col-sm-6 col-lg-4">
-                    <a class="card card-link card-link-pop" href="{{ path('administrare_utilizatori') }}">
+                    <a
+                        class="card card-link card-link-pop"
+                        href="{{ path('administrare_utilizatori') }}"
+                        data-turbo-action="advance"
+                    >
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <span class="avatar bg-blue-lt me-3">
