@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24.15.0-bookworm-slim AS frontend_dependencies
+FROM node:26.5.0-bookworm-slim AS frontend_dependencies
 
 WORKDIR /app/frontend
 
