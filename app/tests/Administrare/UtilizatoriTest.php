@@ -55,7 +55,9 @@ final class UtilizatoriTest extends WebTestCase
         self::assertSelectorTextContains('table', 'ROLE_USER');
         self::assertSelectorTextContains('table', 'Activ');
         self::assertSelectorTextContains('table', 'Inactiv');
-        self::assertCount(6, $pagina->filter('table thead th'));
+        self::assertCount(7, $pagina->filter('table thead th'));
+        self::assertSelectorTextContains('table thead', 'Acțiuni');
+        self::assertCount(2, $pagina->filter('table tbody a.btn.btn-ghost-primary.btn-sm.px-2[title="Editează"] .ti.ti-edit'));
         self::assertGreaterThanOrEqual(4, $pagina->filter('table .badge')->count());
     }
 

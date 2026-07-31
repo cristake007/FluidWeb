@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Utilizator;
+use App\Form\EditareUtilizatorType;
 use App\Form\UtilizatorNouType;
 use App\Repository\UtilizatorRepository;
 use App\Security\GeneratorParolaInitiala;
@@ -79,6 +80,62 @@ final class AdministrareUtilizatoriController extends AbstractController
 
         return $this->render('administrare/utilizator_nou.html.twig', [
             'formular' => $formular,
+        ]);
+    }
+
+    #[Route('/administrare/utilizatori/{id}/editeaza', name: 'administrare_utilizator_editeaza', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
+    public function editeaza(
+        Utilizator $utilizator,
+        Request $request,
+        EntityManagerInterface $managerEntitati,
+    ): Response {
+        $formular = $this->createForm(EditareUtilizatorType::class, $utilizator, [
+            'action' => $this->generateUrl('administrare_utilizator_editeaza', ['id' => $utilizator->getId()]),
+            'administrator' => in_array('ROLE_ADMIN', $utilizator->getRoles(), true),
+            'activ' => $utilizator->esteActiv(),
+        ]);
+        $formular->handleRequest($request);
+
+        if ($formular->isSubmitted()) {
+            $utilizatorAutentificat = $this->getUser();
+            $estePropriulCont = $utilizatorAutentificat instanceof Utilizator
+                && $utilizatorAutentificat->getId() === $utilizator->getId();
+            $esteAdministrator = true === $formular->get('administrator')->getData();
+            $esteActiv = true === $formular->get('activ')->getData();
+
+            if ($estePropriulCont && !$esteAdministrator) {
+                $formular->get('administrator')->addError(new FormError('Nu vă puteți elimina propriul rol de administrator.'));
+            }
+
+            if ($estePropriulCont && !$esteActiv) {
+                $formular->get('activ')->addError(new FormError('Nu vă puteți dezactiva propriul cont.'));
+            }
+
+            if ($formular->isValid()) {
+                $utilizator
+                    ->setRoluri($esteAdministrator ? ['ROLE_ADMIN'] : [])
+                    ->setActiv($esteActiv);
+
+                try {
+                    $managerEntitati->flush();
+                } catch (UniqueConstraintViolationException) {
+                    $formular->get('email')->addError(new FormError('Există deja un utilizator cu această adresă de email.'));
+
+                    return $this->render('administrare/utilizator_editeaza.html.twig', [
+                        'formular' => $formular,
+                        'utilizator' => $utilizator,
+                    ]);
+                }
+
+                $this->addFlash('success', 'Utilizatorul a fost actualizat.');
+
+                return $this->redirectToRoute('administrare_utilizatori');
+            }
+        }
+
+        return $this->render('administrare/utilizator_editeaza.html.twig', [
+            'formular' => $formular,
+            'utilizator' => $utilizator,
         ]);
     }
 }

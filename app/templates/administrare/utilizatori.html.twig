@@ -28,6 +28,12 @@
 
     <div class="page-body">
         <div class="container-xl">
+            {% for mesaj in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">
+                    <i class="ti ti-circle-check me-1" aria-hidden="true"></i>
+                    {{ mesaj }}
+                </div>
+            {% endfor %}
             <div class="card">
                 <div class="table-responsive">
                     <table class="table table-vcenter card-table">
@@ -39,6 +45,7 @@
                                 <th>Stare</th>
                                 <th>Data creării</th>
                                 <th>Ultima actualizare</th>
+                                <th class="w-1">Acțiuni</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,10 +67,20 @@
                                     </td>
                                     <td class="text-secondary text-nowrap">{{ utilizator.creatLa|date('d.m.Y H:i') }}</td>
                                     <td class="text-secondary text-nowrap">{{ utilizator.actualizatLa|date('d.m.Y H:i') }}</td>
+                                    <td>
+                                        <a
+                                            class="btn btn-ghost-primary btn-sm px-2"
+                                            href="{{ path('administrare_utilizator_editeaza', {id: utilizator.id}) }}"
+                                            aria-label="Editează {{ utilizator.prenume }} {{ utilizator.nume }}"
+                                            title="Editează"
+                                        >
+                                            <i class="ti ti-edit" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             {% else %}
                                 <tr>
-                                    <td colspan="6" class="text-center text-secondary">Nu există utilizatori.</td>
+                                    <td colspan="7" class="text-center text-secondary">Nu există utilizatori.</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
