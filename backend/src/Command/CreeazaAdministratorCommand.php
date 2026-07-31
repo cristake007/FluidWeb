@@ -98,7 +98,12 @@ final class CreeazaAdministratorCommand extends Command
 
     private function citesteParola(InputInterface $input): ?string
     {
-        if (!$input instanceof StreamableInputInterface || !is_resource($stream = $input->getStream())) {
+        $stream = $input instanceof StreamableInputInterface ? $input->getStream() : null;
+        if (!is_resource($stream)) {
+            $stream = fopen('php://stdin', 'r');
+        }
+
+        if (!is_resource($stream)) {
             return null;
         }
 

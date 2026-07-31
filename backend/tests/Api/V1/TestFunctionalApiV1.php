@@ -11,22 +11,25 @@ abstract class TestFunctionalApiV1 extends WebTestCase
     protected function creeazaClientCuLimitatorGol(): KernelBrowser
     {
         $client = static::createClient();
-        $poolCache = self::getContainer()->get('cache.api_v1_limiter');
-
-        self::assertInstanceOf(CacheItemPoolInterface::class, $poolCache);
-        $poolCache->clear();
+        $this->curataLimitatoare();
 
         return $client;
     }
 
     protected function tearDown(): void
     {
-        $poolCache = self::getContainer()->get('cache.api_v1_limiter');
-
-        if ($poolCache instanceof CacheItemPoolInterface) {
-            $poolCache->clear();
-        }
+        $this->curataLimitatoare();
 
         parent::tearDown();
+    }
+
+    private function curataLimitatoare(): void
+    {
+        foreach (['cache.api_v1_limiter', 'cache.autentificare_limiter'] as $idPoolCache) {
+            $poolCache = self::getContainer()->get($idPoolCache);
+
+            self::assertInstanceOf(CacheItemPoolInterface::class, $poolCache);
+            $poolCache->clear();
+        }
     }
 }

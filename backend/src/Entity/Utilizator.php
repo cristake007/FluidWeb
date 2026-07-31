@@ -145,6 +145,14 @@ class Utilizator implements UserInterface, PasswordAuthenticatedUserInterface
     {
     }
 
+    public function __serialize(): array
+    {
+        $date = (array) $this;
+        $date["\0".self::class."\0parola"] = hash('crc32c', $this->parola);
+
+        return $date;
+    }
+
     #[ORM\PrePersist]
     public function initializeTimestamps(): void
     {

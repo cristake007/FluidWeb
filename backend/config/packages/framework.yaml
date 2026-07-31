@@ -12,9 +12,14 @@ framework:
     cache:
         pools:
             cache.api_v1_limiter: null
+            cache.autentificare_limiter: null
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    session:
+        cookie_httponly: true
+        cookie_samesite: lax
+        cookie_secure: auto
+        cookie_path: /
 
     #esi: true
     #fragments: true
@@ -25,5 +30,8 @@ when@test:
         rate_limiter:
             api_v1:
                 limit: 2
+        cache:
+            pools:
+                cache.autentificare_limiter: null
         session:
             storage_factory_id: session.storage.factory.mock_file

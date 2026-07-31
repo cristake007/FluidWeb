@@ -52,6 +52,44 @@ final class CreeazaAdministratorCommandTest extends KernelTestCase
     }
 
     #[Test]
+    public function parolaDinStdinNativEsteCititaCandInputulNuOferaStream(): void
+    {
+        $parola = 'parola-administrator-din-stdin-nativ';
+        $comanda = [
+            PHP_BINARY,
+            'bin/console',
+            '--env=test',
+            'app:creeaza-administrator',
+            'stdin@example.com',
+            'Cristian',
+            'Popa',
+        ];
+        $proces = proc_open($comanda, [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ], $fluxuri, dirname(__DIR__));
+
+        self::assertIsResource($proces);
+        fwrite($fluxuri[0], $parola."\r\n");
+        fclose($fluxuri[0]);
+        $iesire = stream_get_contents($fluxuri[1]);
+        $erori = stream_get_contents($fluxuri[2]);
+        fclose($fluxuri[1]);
+        fclose($fluxuri[2]);
+
+        self::assertSame(Command::SUCCESS, proc_close($proces), $iesire.$erori);
+        self::assertStringNotContainsString($parola, $iesire.$erori);
+
+        $this->entityManager->clear();
+        $utilizator = $this->utilizatorRepository->findOneBy(['email' => 'stdin@example.com']);
+        self::assertInstanceOf(Utilizator::class, $utilizator);
+        self::assertTrue(
+            static::getContainer()->get(UserPasswordHasherInterface::class)->isPasswordValid($utilizator, $parola),
+        );
+    }
+
+    #[Test]
     public function parolaGoalaEsteRefuzataFaraPersistentaPartiala(): void
     {
         $tester = $this->ruleazaComanda('');
