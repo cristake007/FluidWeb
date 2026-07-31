@@ -1,0 +1,21 @@
+<nav class="bara-laterala__navigatie">
+    <ul class="navbar-nav">
+        {% for intrare in intrari %}
+            {% set este_activa = app.request.attributes.get('_route') == intrare.ruta %}
+            <li class="nav-item">
+                <a
+                    class="nav-link bara-laterala__legatura{{ este_activa ? ' active' : '' }}"
+                    href="{{ path(intrare.ruta) }}"
+                    {% if este_activa %}aria-current="page"{% endif %}
+                    aria-label="{{ intrare.eticheta }}"
+                    title="{{ intrare.eticheta }}"
+                >
+                    <span class="bara-laterala__iconita">
+                        {% include 'interfata/iconite/_' ~ intrare.iconita ~ '.html.twig' %}
+                    </span>
+                    <span class="bara-laterala__eticheta">{{ intrare.eticheta }}</span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</nav>

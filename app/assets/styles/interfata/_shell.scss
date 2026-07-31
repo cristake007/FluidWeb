@@ -1,0 +1,472 @@
+$latime-bara: 260px;
+$latime-bara-restransa: 60px;
+$inaltime-header: 64px;
+$durata-shell: 220ms;
+$culoare-principala: #164194;
+$culoare-activa: #d41131;
+
+.layout-aplicatie {
+    min-width: 320px;
+    min-height: 100vh;
+    background: #f5f7fb;
+}
+
+.shell-aplicatie {
+    --latime-bara-laterala: #{$latime-bara};
+
+    min-height: 100vh;
+
+    &__continut {
+        width: calc(100% - var(--latime-bara-laterala));
+        min-height: calc(100vh - #{$inaltime-header});
+        margin-left: var(--latime-bara-laterala);
+        padding: 1.5rem;
+        transition: width $durata-shell ease, margin-left $durata-shell ease;
+    }
+
+    &--restransa {
+        --latime-bara-laterala: #{$latime-bara-restransa};
+    }
+}
+
+.header-aplicatie {
+    position: sticky;
+    z-index: 1040;
+    top: 0;
+    display: block;
+    width: 100%;
+    height: $inaltime-header;
+    min-height: $inaltime-header;
+    padding: 0;
+    background: #fff;
+    border-bottom: 1px solid rgb(98 105 118 / 16%);
+    box-shadow: 0 1px 4px rgb(24 36 51 / 5%);
+
+    &__logo {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--latime-bara-laterala);
+        height: 100%;
+        overflow: hidden;
+        transition: width $durata-shell ease;
+    }
+
+    &__brand {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+        color: $culoare-principala;
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        text-decoration: none;
+
+        &:hover {
+            color: $culoare-principala;
+        }
+    }
+
+    &__brand-extins,
+    &__brand-restrans {
+        position: absolute;
+        transition: opacity $durata-shell ease, transform $durata-shell ease;
+    }
+
+    &__brand-restrans {
+        opacity: 0;
+        font-size: 0.875rem;
+        letter-spacing: 0;
+        transform: scale(0.85);
+    }
+
+    &__cautare {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: min(34rem, calc(100% - #{$latime-bara * 2} - 3rem));
+        transform: translate(-50%, -50%);
+
+        .form-control {
+            height: 2.5rem;
+            padding-left: 2.5rem;
+            background: #f7f9fc;
+            border-color: rgb(98 105 118 / 16%);
+        }
+    }
+
+    &__cautare-icon {
+        position: absolute;
+        z-index: 1;
+        top: 50%;
+        left: 0.75rem;
+        width: 1rem;
+        height: 1rem;
+        color: #667382;
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+
+    &__actiuni {
+        position: absolute;
+        top: 50%;
+        right: 1.25rem;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: flex-end;
+        transform: translateY(-50%);
+    }
+
+    &__avatar {
+        color: $culoare-principala;
+        cursor: pointer;
+        background: #eef3fb;
+        border: 0;
+    }
+
+    &__meniu-mobil {
+        display: none;
+    }
+}
+
+.bara-laterala {
+    position: fixed;
+    z-index: 1030;
+    top: $inaltime-header;
+    bottom: 0;
+    left: 0;
+    display: block;
+    box-sizing: border-box;
+    width: var(--latime-bara-laterala);
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #fff;
+    border: 0;
+    border-right: 1px solid rgb(98 105 118 / 16%);
+    transition: width $durata-shell ease;
+
+    .navbar-collapse {
+        min-height: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    &__corp {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+    }
+
+    &__navigatie {
+        flex: 1 1 auto;
+        min-height: 0;
+        padding: 1rem 0;
+        overflow-y: auto;
+    }
+
+    &.navbar-expand-md .navbar-nav &__legatura.nav-link {
+        position: relative;
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 46px;
+        padding: 0.75rem 1.25rem;
+        overflow: hidden;
+        color: $culoare-principala;
+        white-space: nowrap;
+        cursor: pointer;
+        background: transparent;
+        border-radius: 0;
+        transition: color $durata-shell ease, background-color $durata-shell ease, padding $durata-shell ease;
+
+        &::before {
+            position: absolute;
+            top: 50%;
+            bottom: 50%;
+            left: 0;
+            width: 3px;
+            background: $culoare-activa;
+            content: '';
+            transition: top $durata-shell ease, bottom $durata-shell ease;
+        }
+
+        &.active {
+            color: $culoare-activa;
+            background: transparent;
+
+            &::before {
+                top: 0;
+                bottom: 0;
+            }
+        }
+
+        &:hover {
+            color: $culoare-activa;
+            text-decoration: none;
+            background: rgb(212 17 49 / 5%);
+
+            &::before {
+                top: 0;
+                bottom: 0;
+            }
+
+            .bara-laterala__iconita,
+            .bara-laterala__eticheta {
+                transform: translateX(4px);
+            }
+        }
+    }
+
+    &__iconita {
+        display: grid;
+        flex: 0 0 1.5rem;
+        place-items: center;
+        width: 1.5rem;
+        transition: transform $durata-shell ease;
+
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            transition: width $durata-shell ease, height $durata-shell ease;
+        }
+    }
+
+    &__eticheta {
+        max-width: 12rem;
+        overflow: hidden;
+        opacity: 1;
+        transition: max-width $durata-shell ease, opacity 70ms ease 150ms, transform $durata-shell ease;
+    }
+
+    &__subsol {
+        flex: 0 0 auto;
+        padding: 0.75rem;
+        border-top: 1px solid rgb(98 105 118 / 16%);
+    }
+
+    &__restrangere {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        width: 100%;
+        min-height: 40px;
+        padding: 0.5rem;
+        overflow: hidden;
+        color: $culoare-principala;
+        white-space: nowrap;
+        background: transparent;
+        border: 0;
+        border-radius: 0.375rem;
+        transition: color $durata-shell ease;
+
+        &:hover {
+            color: $culoare-activa;
+            background: rgb(22 65 148 / 5%);
+        }
+    }
+
+    &__restrangere-icon {
+        flex: 0 0 1.5rem;
+        transition: transform $durata-shell ease;
+    }
+
+    &__restrangere-text {
+        max-width: 12rem;
+        overflow: hidden;
+        opacity: 1;
+        transition: max-width $durata-shell ease, opacity 70ms ease 150ms;
+    }
+}
+
+.shell-aplicatie--restransa {
+    .header-aplicatie__brand-extins {
+        opacity: 0;
+        transform: scale(0.9);
+        transition-delay: 0s;
+    }
+
+    .header-aplicatie__brand-restrans {
+        opacity: 1;
+        transform: scale(1);
+        transition-delay: 140ms;
+    }
+
+    .bara-laterala.navbar-expand-md .navbar-nav .bara-laterala__legatura.nav-link {
+        gap: 0;
+        padding-inline: calc((#{$latime-bara-restransa} - 1.5rem) / 2);
+
+        &::before {
+            display: none;
+        }
+
+        &:hover .bara-laterala__iconita {
+            transform: none;
+        }
+    }
+
+    .bara-laterala__iconita .icon {
+        width: 1.35rem;
+        height: 1.35rem;
+    }
+
+    .bara-laterala__eticheta,
+    .bara-laterala__restrangere-text {
+        opacity: 0;
+    }
+
+    .bara-laterala__eticheta {
+        max-width: 0;
+        transition: max-width $durata-shell ease, opacity 70ms ease 150ms;
+    }
+
+    .bara-laterala__restrangere-text {
+        max-width: 0;
+        transition: max-width $durata-shell ease, opacity 70ms ease 150ms;
+    }
+
+    .bara-laterala__subsol {
+        padding-inline: 0.625rem;
+    }
+
+    .bara-laterala__restrangere {
+        justify-content: center;
+        gap: 0;
+        padding-inline: 0;
+    }
+
+    .bara-laterala__restrangere-icon {
+        transform: rotate(180deg);
+    }
+}
+
+.shell-aplicatie--fara-tranzitie,
+.shell-aplicatie--fara-tranzitie * {
+    transition: none !important;
+}
+
+@media (max-width: 767.98px) {
+    .shell-aplicatie {
+        --latime-bara-laterala: 0px;
+
+        &__continut {
+            width: 100%;
+            margin-left: 0;
+            padding-top: 1.5rem;
+        }
+    }
+
+    .header-aplicatie {
+        display: grid;
+        grid-template-columns: auto minmax(7rem, 1fr) auto;
+        gap: 0.75rem;
+        padding-inline: 0.75rem;
+
+        &__logo {
+            position: relative;
+            justify-content: flex-start;
+            width: auto;
+        }
+
+        &__brand {
+            width: auto;
+            padding-inline: 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        &__brand-extins {
+            position: static;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        &__brand-restrans {
+            display: none;
+        }
+
+        &__meniu-mobil {
+            display: inline-flex;
+            padding: 0.375rem;
+        }
+
+        &__cautare {
+            position: relative;
+            top: auto;
+            left: auto;
+            width: 100%;
+            transform: none;
+        }
+
+        &__actiuni {
+            position: relative;
+            top: auto;
+            right: auto;
+            transform: none;
+        }
+    }
+
+    .bara-laterala {
+        right: 0;
+        bottom: auto;
+        width: 100%;
+        background: transparent;
+        border-right: 0;
+
+        .navbar-collapse {
+            height: auto;
+            max-height: calc(100vh - #{$inaltime-header});
+            max-height: calc(100svh - #{$inaltime-header});
+            overflow-y: auto;
+            background: #fff;
+            border-bottom: 1px solid rgb(98 105 118 / 16%);
+            box-shadow: 0 0.5rem 1rem rgb(24 36 51 / 10%);
+        }
+
+        &__corp {
+            height: auto;
+        }
+
+        &__navigatie {
+            padding-block: 0.5rem;
+        }
+
+        &__subsol {
+            display: none;
+        }
+    }
+}
+
+@media (max-width: 479.98px) {
+    .header-aplicatie {
+        grid-template-columns: auto 1fr auto;
+
+        &__brand {
+            display: none;
+        }
+
+        &__cautare .form-control {
+            padding-right: 0.5rem;
+        }
+
+        &__actiuni {
+            gap: 0.125rem;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .shell-aplicatie,
+    .shell-aplicatie * {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}

@@ -1,0 +1,42 @@
+<header class="header-aplicatie navbar navbar-light" data-header-aplicatie>
+    <div class="header-aplicatie__logo">
+        <button
+            class="navbar-toggler header-aplicatie__meniu-mobil"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navigatie-principala"
+            aria-controls="navigatie-principala"
+            aria-expanded="false"
+            aria-label="Deschide navigația"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M4 6l16 0"/><path d="M4 12l16 0"/><path d="M4 18l16 0"/>
+            </svg>
+        </button>
+        <a class="header-aplicatie__brand" href="{{ path('pagina_principala') }}" aria-label="FluidWeb – pagina principală">
+            <span class="header-aplicatie__brand-extins">FluidWeb</span>
+            <span class="header-aplicatie__brand-restrans" aria-hidden="true">FW</span>
+        </a>
+    </div>
+
+    <div class="header-aplicatie__cautare">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon header-aplicatie__cautare-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/>
+        </svg>
+        <label class="visually-hidden" for="cautare-aplicatie">Caută</label>
+        <input class="form-control" id="cautare-aplicatie" type="search" placeholder="Caută..." autocomplete="off">
+    </div>
+
+    <div class="header-aplicatie__actiuni">
+        <button class="btn btn-icon btn-ghost-secondary" type="button" aria-label="Notificări">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/>
+            </svg>
+        </button>
+
+        {% include 'interfata/_utilizator.html.twig' %}
+    </div>
+</header>

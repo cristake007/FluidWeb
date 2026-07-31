@@ -40,6 +40,7 @@ final class AutentificareWebTest extends WebTestCase
         $this->client->request('GET', '/');
 
         self::assertResponseRedirects('/autentificare', Response::HTTP_FOUND);
+        self::assertStringNotContainsString('data-shell-aplicatie', (string) $this->client->getResponse()->getContent());
     }
 
     public function testPaginaDeAutentificareRaspundeCuHtml(): void
@@ -114,9 +115,68 @@ final class AutentificareWebTest extends WebTestCase
 
         $pagina = $this->client->followRedirect();
 
-        self::assertSelectorTextContains('body', 'Cristian Popa');
-        self::assertSelectorTextContains('body', 'admin@example.com');
+        self::assertCount(1, $pagina->filter('[data-shell-aplicatie][data-controller="bara-laterala"]'));
         self::assertCount(1, $pagina->filter('form[action="/deconectare"][method="post"] input[name="_csrf_token"]'));
+    }
+
+    public function testShellulAutentificatContineHeaderulCerutFaraTitlulPaginii(): void
+    {
+        $this->creeazaUtilizator('admin@example.com', 'parola');
+        $this->trimiteFormularAutentificare('admin@example.com', 'parola');
+
+        $pagina = $this->client->followRedirect();
+        $header = $pagina->filter('header[data-header-aplicatie]');
+
+        self::assertCount(1, $header);
+        self::assertCount(1, $header->filter('.header-aplicatie__brand-extins'));
+        self::assertCount(1, $header->filter('.header-aplicatie__brand-restrans'));
+        self::assertCount(1, $header->filter('input[type="search"][placeholder="Caută..."]'));
+        self::assertCount(1, $header->filter('button[aria-label="Notificări"]'));
+        self::assertCount(1, $header->filter('button.avatar[aria-label="Meniu utilizator"]'));
+        self::assertCount(0, $header->filter('h1, .page-title'));
+        self::assertStringNotContainsString('Panou de control', $header->text());
+    }
+
+    public function testDropdownulAvataruluiContineNumaiFormularulPostDeDeconectareCuCsrf(): void
+    {
+        $this->creeazaUtilizator('admin@example.com', 'parola');
+        $this->trimiteFormularAutentificare('admin@example.com', 'parola');
+
+        $pagina = $this->client->followRedirect();
+        $dropdown = $pagina->filter('.header-aplicatie__actiuni .dropdown-menu');
+
+        self::assertCount(1, $dropdown->filter('form[action="/deconectare"][method="post"]'));
+        self::assertCount(1, $dropdown->filter('input[name="_csrf_token"][value]:not([value=""])'));
+        self::assertCount(1, $dropdown->filter('button[type="submit"]'));
+        self::assertCount(0, $dropdown->filter('a'));
+        self::assertSelectorTextSame('.header-aplicatie__actiuni .dropdown-item', 'Deconectare');
+    }
+
+    public function testNavigatiaMarcheazaRutaCurentaCaActiva(): void
+    {
+        $this->creeazaUtilizator('admin@example.com', 'parola');
+        $this->trimiteFormularAutentificare('admin@example.com', 'parola');
+
+        $pagina = $this->client->followRedirect();
+
+        self::assertCount(1, $pagina->filter('.bara-laterala.navbar-expand-md:not(.navbar-vertical)'));
+        self::assertCount(1, $pagina->filter('.bara-laterala__navigatie .nav-link.active[aria-current="page"][aria-label="Panou de control"][href="/"]'));
+        self::assertSelectorTextSame('.bara-laterala__navigatie .nav-link.active', 'Panou de control');
+        self::assertCount(0, $pagina->filter('.shell-aplicatie__continut .container-xl'));
+        self::assertCount(1, $pagina->filter('.shell-aplicatie__continut > .page-title'));
+    }
+
+    public function testShellulContineControaleleStimulusPentruRestrangere(): void
+    {
+        $this->creeazaUtilizator('admin@example.com', 'parola');
+        $this->trimiteFormularAutentificare('admin@example.com', 'parola');
+
+        $pagina = $this->client->followRedirect();
+
+        self::assertCount(1, $pagina->filter('[data-controller="bara-laterala"]'));
+        self::assertCount(1, $pagina->filter('button[data-action="bara-laterala#comuta"][data-bara-laterala-target="control"][aria-label="Restrânge"]'));
+        self::assertCount(1, $pagina->filter('[data-bara-laterala-target="text"]'));
+        self::assertCount(1, $pagina->filter('#navigatie-principala.collapse'));
     }
 
     public function testParolaGresitaEsteRefuzata(): void

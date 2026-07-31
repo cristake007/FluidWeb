@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block clasa_body %}layout-aplicatie{% endblock %}
+
+{% block body %}
+    <div
+        class="shell-aplicatie"
+        data-shell-aplicatie
+        data-controller="bara-laterala"
+        data-bara-laterala-clasa-restransa-value="shell-aplicatie--restransa"
+    >
+        {% include 'interfata/_header.html.twig' %}
+        {% include 'interfata/_bara_laterala.html.twig' %}
+
+        <main class="shell-aplicatie__continut" id="continut-principal">
+            {% block continut_aplicatie %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}
