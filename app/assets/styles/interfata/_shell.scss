@@ -6,6 +6,12 @@ $culoare-principala: #164194;
 $culoare-activa: #d41131;
 
 .layout-aplicatie {
+    --fluidweb-interactiune-culoare: #{$culoare-principala};
+    --fluidweb-interactiune-culoare-activa: #{$culoare-activa};
+    --fluidweb-interactiune-fundal: transparent;
+    --fluidweb-interactiune-fundal-activ: rgb(212 17 49 / 5%);
+    --fluidweb-interactiune-border: transparent;
+
     min-width: 320px;
     min-height: 100vh;
     background: #f5f7fb;
@@ -121,13 +127,25 @@ $culoare-activa: #d41131;
         align-items: center;
         justify-content: flex-end;
         transform: translateY(-50%);
-    }
 
-    &__avatar {
-        color: $culoare-principala;
-        cursor: pointer;
-        background: #eef3fb;
-        border: 0;
+        .btn-icon,
+        .header-aplicatie__avatar {
+            --fluidweb-interactiune-fundal: #eef3fb;
+            --fluidweb-interactiune-border: rgb(22 65 148 / 12%);
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            min-width: 2rem;
+            height: 2rem;
+            min-height: 2rem;
+            padding: 0;
+            cursor: pointer;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: var(--tblr-border-radius);
+        }
     }
 
     &__meniu-mobil {
@@ -171,6 +189,12 @@ $culoare-activa: #d41131;
         min-height: 0;
         padding: 1rem 0;
         overflow-y: auto;
+
+        .navbar-nav,
+        .nav-item,
+        .nav-link {
+            width: 100%;
+        }
     }
 
     &.navbar-expand-md .navbar-nav &__legatura.nav-link {
@@ -182,12 +206,9 @@ $culoare-activa: #d41131;
         min-height: 46px;
         padding: 0.75rem 1.25rem;
         overflow: hidden;
-        color: $culoare-principala;
         white-space: nowrap;
         cursor: pointer;
-        background: transparent;
         border-radius: 0;
-        transition: color $durata-shell ease, background-color $durata-shell ease, padding $durata-shell ease;
 
         &::before {
             position: absolute;
@@ -201,9 +222,6 @@ $culoare-activa: #d41131;
         }
 
         &.active {
-            color: $culoare-activa;
-            background: transparent;
-
             &::before {
                 top: 0;
                 bottom: 0;
@@ -211,9 +229,7 @@ $culoare-activa: #d41131;
         }
 
         &:hover {
-            color: $culoare-activa;
             text-decoration: none;
-            background: rgb(212 17 49 / 5%);
 
             &::before {
                 top: 0;
@@ -262,17 +278,9 @@ $culoare-activa: #d41131;
         min-height: 40px;
         padding: 0.5rem;
         overflow: hidden;
-        color: $culoare-principala;
         white-space: nowrap;
-        background: transparent;
         border: 0;
         border-radius: 0.375rem;
-        transition: color $durata-shell ease;
-
-        &:hover {
-            color: $culoare-activa;
-            background: rgb(22 65 148 / 5%);
-        }
     }
 
     &__restrangere-icon {
@@ -285,6 +293,36 @@ $culoare-activa: #d41131;
         overflow: hidden;
         opacity: 1;
         transition: max-width $durata-shell ease, opacity 70ms ease 150ms;
+    }
+}
+
+.bara-laterala.navbar-expand-md .navbar-nav .bara-laterala__legatura.nav-link,
+.header-aplicatie__actiuni .btn-icon,
+.header-aplicatie__actiuni .header-aplicatie__avatar,
+.header-aplicatie__actiuni .dropdown-item,
+.bara-laterala__restrangere {
+    color: var(--fluidweb-interactiune-culoare);
+    background-color: var(--fluidweb-interactiune-fundal);
+    border-color: var(--fluidweb-interactiune-border);
+    transition:
+        color $durata-shell ease,
+        background-color $durata-shell ease,
+        border-color $durata-shell ease,
+        padding $durata-shell ease;
+
+    .icon {
+        color: inherit;
+    }
+
+    &:hover,
+    &:focus {
+        color: var(--fluidweb-interactiune-culoare-activa);
+        background-color: var(--fluidweb-interactiune-fundal-activ);
+    }
+
+    &:focus-visible {
+        outline: 2px solid rgb(22 65 148 / 45%);
+        outline-offset: -2px;
     }
 }
 
