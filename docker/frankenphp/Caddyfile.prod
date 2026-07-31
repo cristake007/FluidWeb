@@ -21,17 +21,8 @@
 
 	header ?Permissions-Policy "browsing-topics=()"
 
-	handle /api/* {
-		root * /app/backend/public
-		php_server {
-			worker /app/backend/public/index.php
-		}
-	}
-
-	@frontend not path /.well-known/mercure*
-	handle @frontend {
-		root * /app/frontend
-		try_files {path} /index.html
-		file_server
+	root * /app/public
+	php_server {
+		worker /app/public/index.php
 	}
 }

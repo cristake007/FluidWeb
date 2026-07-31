@@ -1,14 +1,15 @@
 # FluidWeb
 
-FluidWeb is an internal platform built with Symfony, Angular, FrankenPHP, PostgreSQL and Mercure.
+FluidWeb is an internal platform built as a server-rendered Symfony Web App with FrankenPHP, PostgreSQL and Mercure.
 
 ## Structure
 
 ```text
-backend/   Symfony API
-frontend/  Angular application
+app/       Symfony Web App and API
 docker/    Runtime configuration
 ```
+
+The application uses Twig, AssetMapper, ImportMap, Stimulus and Symfony UX Turbo. Browser assets are served locally; Node.js is not required.
 
 ## Development
 
@@ -18,18 +19,18 @@ Start the development profile:
 docker compose --profile dev up --build --wait -d
 ```
 
-Open `http://localhost`. FrankenPHP serves the public endpoint, sends `/api/*` to Symfony and proxies the remaining routes to Angular.
+Open `http://localhost`. FrankenPHP serves static assets directly and sends application routes to Symfony.
 
 Useful commands:
 
 ```bash
 docker compose --profile dev ps
-docker compose --profile dev logs -f app-dev frontend-dev
+docker compose --profile dev logs -f app-dev
 docker compose --profile dev exec app-dev php bin/console
 docker compose --profile dev down --remove-orphans
 ```
 
-PostgreSQL and the Angular development server are available only inside the Docker network.
+PostgreSQL is available only inside the Docker network.
 
 ## Production image
 
@@ -40,8 +41,8 @@ cp .env.example .env
 docker compose --profile prod up --build --wait -d
 ```
 
-The `app_prod` Docker target contains Symfony, its production dependencies and the compiled Angular application. Production secrets must be supplied through `.env` or the installer.
+The `app_prod` Docker target contains the complete Symfony application, its production dependencies and AssetMapper output compiled into `public/assets/`. Production secrets must be supplied through `.env` or the installer.
 
 ## Quality checks
 
-GitHub Actions runs only when started manually. The workflow validates Composer, Symfony configuration, PHPStan, PHP-CS-Fixer, PHPUnit, Angular formatting, ESLint, build and tests.
+GitHub Actions runs only when started manually. The workflow validates Composer, YAML, Twig, the service container, AssetMapper, PHPStan, PHP-CS-Fixer, Doctrine migrations, PHPUnit, application routes and the production image.

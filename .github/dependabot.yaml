@@ -10,16 +10,7 @@ updates:
       default-days: 7
 
   - package-ecosystem: composer
-    directory: /backend
-    schedule:
-      interval: weekly
-    commit-message:
-      prefix: "chore"
-    cooldown:
-      default-days: 7
-
-  - package-ecosystem: npm
-    directory: /frontend
+    directory: /app
     schedule:
       interval: weekly
     commit-message:

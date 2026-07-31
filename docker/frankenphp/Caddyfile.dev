@@ -21,13 +21,6 @@
 
 	header ?Permissions-Policy "browsing-topics=()"
 
-	handle /api/* {
-		root * /app/backend/public
-		php_server
-	}
-
-	@frontend not path /.well-known/mercure*
-	handle @frontend {
-		reverse_proxy frontend-dev:4200
-	}
+	root * /app/public
+	php_server
 }

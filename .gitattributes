@@ -10,9 +10,9 @@
 *.sh text eol=lf
 *.yaml text eol=lf
 *.yml text eol=lf
-backend/bin/console text eol=lf
-backend/bin/phpunit text eol=lf
-backend/composer.lock text eol=lf merge=ours
+app/bin/console text eol=lf
+app/bin/phpunit text eol=lf
+app/composer.lock text eol=lf merge=ours
 
 *.ico binary
 *.png binary

@@ -30,11 +30,13 @@ jobs:
       - name: Start development services
         run: docker compose --profile dev up --wait -d
 
-      - name: Validate backend
+      - name: Validate application
         run: |
           docker compose --profile dev exec -T app-dev composer validate --strict
           docker compose --profile dev exec -T app-dev php bin/console lint:yaml config
+          docker compose --profile dev exec -T app-dev php bin/console lint:twig templates
           docker compose --profile dev exec -T app-dev php bin/console lint:container
+          docker compose --profile dev exec -T app-dev php bin/console debug:asset-map
           docker compose --profile dev exec -T app-dev php bin/console cache:warmup --env=dev
           docker compose --profile dev exec -T app-dev vendor/bin/phpstan analyse --no-progress --memory-limit=512M
           docker compose --profile dev exec -T app-dev vendor/bin/php-cs-fixer fix --dry-run --diff
@@ -44,20 +46,16 @@ jobs:
           docker compose --profile dev exec -T app-dev php bin/console doctrine:database:create --env=test --if-not-exists
           docker compose --profile dev exec -T app-dev php bin/console doctrine:migrations:migrate --env=test --no-interaction --all-or-nothing
 
-      - name: Run backend tests
+      - name: Run application tests
         run: docker compose --profile dev exec -T app-dev php bin/phpunit
-
-      - name: Validate frontend
-        run: |
-          docker compose --profile dev exec -T frontend-dev npm run format:check
-          docker compose --profile dev exec -T frontend-dev npm run lint
-          docker compose --profile dev exec -T frontend-dev npm run build
-          docker compose --profile dev exec -T frontend-dev npm run test:ci
 
       - name: Check routes
         run: |
           curl --fail-with-body http://localhost/
           curl --fail-with-body http://localhost/api/v1/stare
+
+      - name: Build production image
+        run: docker compose --profile prod build
 
       - name: Stop services
         if: always()

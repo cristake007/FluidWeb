@@ -1,3 +1,0 @@
-# Symfony Flex requires Docker Compose recipe markers at column 1.
-compose.yaml
-compose.override.yaml

@@ -1,30 +1,10 @@
 # syntax=docker/dockerfile:1
 
-FROM node:26.5.0-bookworm-slim AS frontend_dependencies
-
-WORKDIR /app/frontend
-
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci --no-audit --no-fund
-
-FROM frontend_dependencies AS frontend_dev
-
-COPY frontend/ ./
-
-EXPOSE 4200
-
-CMD ["npm", "start", "--", "--host", "0.0.0.0", "--port", "4200"]
-
-FROM frontend_dependencies AS frontend_build
-
-COPY frontend/ ./
-RUN npm run build
-
 FROM dunglas/frankenphp:1-php8.5 AS frankenphp_base
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-WORKDIR /app/backend
+WORKDIR /app
 
 RUN <<-EOF
 	apt-get update
@@ -59,7 +39,7 @@ ENV XDEBUG_MODE=off
 RUN <<-EOF
 	mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 	install-php-extensions xdebug
-	git config --system --add safe.directory /app/backend
+	git config --system --add safe.directory /app
 EOF
 
 COPY --link docker/php/dev.ini $PHP_INI_DIR/app.conf.d/20-app.dev.ini
@@ -74,16 +54,17 @@ ENV APP_ENV=prod
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 COPY --link docker/php/prod.ini $PHP_INI_DIR/app.conf.d/20-app.prod.ini
-COPY --link backend/composer.* backend/symfony.* ./
+COPY --link app/composer.* app/symfony.* ./
 RUN composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
-COPY --link --exclude=var backend/ ./
+COPY --link --exclude=var app/ ./
 
 RUN <<-EOF
 	mkdir -p var/cache var/log var/share
 	composer dump-autoload --classmap-authoritative --no-dev
 	composer dump-env prod
 	composer run-script --no-dev post-install-cmd
+	php bin/console asset-map:compile
 	chmod +x bin/console
 	chmod -R g=u var
 	sync
@@ -127,9 +108,8 @@ COPY --from=app_prod_builder /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf
 COPY --from=app_prod_builder /usr/bin/file /usr/bin/file
 COPY --from=app_prod_builder /usr/lib/file/magic.mgc /usr/lib/file/magic.mgc
 
-COPY --link --exclude=var --from=app_prod_builder /app/backend /app/backend
-COPY --chown=www-data:0 --from=app_prod_builder /app/backend/var /app/backend/var
-COPY --from=frontend_build /app/frontend/dist/frontend/browser /app/frontend
+COPY --link --exclude=var --from=app_prod_builder /app /app
+COPY --chown=www-data:0 --from=app_prod_builder /app/var /app/var
 
 COPY --link docker/frankenphp/Caddyfile.prod /etc/frankenphp/Caddyfile
 COPY --link --chmod=755 docker/frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
@@ -137,12 +117,12 @@ COPY --link --chmod=755 docker/frankenphp/docker-entrypoint.sh /usr/local/bin/do
 RUN <<-EOF
 	mkdir -p /data/caddy /config/caddy
 	chown -R www-data:www-data /data /config
-	chmod g=u /app/backend/var
+	chmod g=u /app/var
 	find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 EOF
 
 USER www-data
-WORKDIR /app/backend
+WORKDIR /app
 
 ENTRYPOINT ["docker-entrypoint"]
 
