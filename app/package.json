@@ -7,6 +7,7 @@
         "@symfony/stimulus-bridge": "^4.0.1",
         "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^7.0.0",
+        "@tabler/core": "1.4.0",
         "babel-plugin-polyfill-corejs3": "^1.0.0",
         "core-js": "^3.49.0",
         "sass": "^1.102.0",
