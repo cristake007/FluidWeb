@@ -1,8 +1,0 @@
-{
-  "threshold": 0,
-  "ignore": [
-    "**/config/reference.php",
-    "**/package-lock.json",
-    "**/tsconfig*.json"
-  ]
-}

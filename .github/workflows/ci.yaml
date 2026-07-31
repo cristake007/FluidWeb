@@ -57,6 +57,27 @@ jobs:
       - name: Build production image
         run: docker compose --profile prod build
 
+      - name: Verify production dependencies
+        run: |
+          docker compose --profile prod run --rm --no-deps --entrypoint php app-prod -r '
+          require "/app/vendor/autoload.php";
+
+          $classes = [
+              "PHPUnit\\Framework\\TestCase",
+              "PHPStan\\Analyser\\Analyser",
+              "Symfony\\Bundle\\DebugBundle\\DebugBundle",
+              "Symfony\\Bundle\\MakerBundle\\MakerBundle",
+              "Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle",
+          ];
+
+          $autoloadable = array_filter($classes, static fn (string $class): bool => class_exists($class));
+
+          if ([] !== $autoloadable) {
+              fwrite(STDERR, "Development classes are autoloadable: ".implode(", ", $autoloadable).PHP_EOL);
+              exit(1);
+          }
+          '
+
       - name: Stop services
         if: always()
         run: docker compose --profile dev down --remove-orphans
