@@ -1,42 +1,70 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/securitate.html.twig' %}
 
 {% block title %}Autentificare | FluidWeb{% endblock %}
 
-{% block body %}
-    <main>
-        <h1>Autentificare</h1>
+{% block continut_securitate %}
+    <h1 id="titlu-autentificare" class="h1 text-white mb-3">Autentificare</h1>
 
-        {% if eroare_autentificare %}
-            <p role="alert">{{ eroare_autentificare.messageKey|trans(eroare_autentificare.messageData, 'security', 'ro') }}</p>
-        {% endif %}
+    {% if eroare_autentificare %}
+        <div class="alert alert-danger mb-3" role="alert">
+            {% if eroare_autentificare.messageKey starts with 'Too many failed login attempts' %}
+                {{ eroare_autentificare.messageKey|trans(eroare_autentificare.messageData, 'security', 'ro') }}
+            {% else %}
+                Adresa de email sau parola este incorectă.
+            {% endif %}
+        </div>
+    {% endif %}
 
-        <form action="{{ path('autentificare') }}" method="post">
-            <div>
-                <label for="email">Adresă de email</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value="{{ ultima_adresa_email }}"
-                    autocomplete="username"
-                    required
-                    autofocus
-                >
-            </div>
+    <form
+        action="{{ path('autentificare') }}"
+        method="post"
+        data-controller="validare-autentificare"
+        data-action="submit->validare-autentificare#valideaza"
+        novalidate
+    >
+        <div class="mb-2">
+            <label class="form-label pagina-autentificare__eticheta" for="email">
+                Adresă de email
+                <span class="pagina-autentificare__obligatoriu" aria-hidden="true">*</span>
+                <span class="visually-hidden">(obligatoriu)</span>
+            </label>
+            <input
+                class="form-control pagina-autentificare__camp"
+                type="email"
+                id="email"
+                name="email"
+                value="{{ ultima_adresa_email }}"
+                autocomplete="username"
+                aria-describedby="eroare-email"
+                data-validare-autentificare-target="camp"
+                data-action="blur->validare-autentificare#valideazaCamp input->validare-autentificare#actualizeazaDupaEditare"
+                required
+                autofocus
+            >
+            <div id="eroare-email" class="invalid-feedback">Introduceți o adresă de email validă.</div>
+        </div>
 
-            <div>
-                <label for="parola">Parolă</label>
-                <input
-                    type="password"
-                    id="parola"
-                    name="parola"
-                    autocomplete="current-password"
-                    required
-                >
-            </div>
+        <div class="mb-3">
+            <label class="form-label pagina-autentificare__eticheta" for="parola">
+                Parolă
+                <span class="pagina-autentificare__obligatoriu" aria-hidden="true">*</span>
+                <span class="visually-hidden">(obligatoriu)</span>
+            </label>
+            <input
+                class="form-control pagina-autentificare__camp"
+                type="password"
+                id="parola"
+                name="parola"
+                autocomplete="current-password"
+                aria-describedby="eroare-parola"
+                data-validare-autentificare-target="camp"
+                data-action="blur->validare-autentificare#valideazaCamp input->validare-autentificare#actualizeazaDupaEditare"
+                required
+            >
+            <div id="eroare-parola" class="invalid-feedback">Introduceți parola.</div>
+        </div>
 
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('autentificare') }}">
-            <button type="submit">Autentificare</button>
-        </form>
-    </main>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('autentificare') }}">
+        <button class="btn btn-light w-100 pagina-autentificare__buton" type="submit">Autentificare</button>
+    </form>
 {% endblock %}

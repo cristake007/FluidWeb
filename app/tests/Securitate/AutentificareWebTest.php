@@ -44,10 +44,13 @@ final class AutentificareWebTest extends WebTestCase
 
     public function testPaginaDeAutentificareRaspundeCuHtml(): void
     {
-        $this->client->request('GET', '/autentificare');
+        $pagina = $this->client->request('GET', '/autentificare');
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'text/html; charset=UTF-8');
+        self::assertCount(1, $pagina->filter('body.layout-securitate'));
+        self::assertCount(1, $pagina->filter('main.pagina-autentificare[data-layout="securitate"]'));
+        self::assertCount(1, $pagina->filter('.pagina-autentificare__imagine img[src^="/build/images/"]'));
     }
 
     public function testFormularulContineCampurileNecesare(): void
@@ -57,6 +60,26 @@ final class AutentificareWebTest extends WebTestCase
         self::assertCount(1, $pagina->filter('input[name="email"][autocomplete="username"]'));
         self::assertCount(1, $pagina->filter('input[name="parola"][autocomplete="current-password"]'));
         self::assertCount(1, $pagina->filter('input[name="_csrf_token"]'));
+        self::assertCount(1, $pagina->filter('form[action="/autentificare"][method="post"][novalidate][data-controller="validare-autentificare"]'));
+        self::assertCount(2, $pagina->filter('input[required][data-validare-autentificare-target="camp"]'));
+        self::assertCount(2, $pagina->filter('.invalid-feedback'));
+    }
+
+    public function testPaginaDeAutentificareNuContineShellSauResurseExterne(): void
+    {
+        $pagina = $this->client->request('GET', '/autentificare');
+
+        self::assertCount(0, $pagina->filter('.navbar, .sidebar, [data-shell-aplicatie]'));
+
+        foreach ($pagina->filter('[src], [href]') as $resursa) {
+            $adresa = $resursa->hasAttribute('src')
+                ? $resursa->getAttribute('src')
+                : $resursa->getAttribute('href');
+
+            self::assertFalse(str_starts_with($adresa, 'http://'));
+            self::assertFalse(str_starts_with($adresa, 'https://'));
+            self::assertFalse(str_starts_with($adresa, '//'));
+        }
     }
 
     public function testAutentificareaValidaReuseste(): void
@@ -98,6 +121,11 @@ final class AutentificareWebTest extends WebTestCase
         $this->trimiteFormularAutentificare('admin@example.com', 'gresita');
 
         self::assertResponseRedirects('/autentificare');
+        $pagina = $this->client->followRedirect();
+        self::assertSame(
+            'Adresa de email sau parola este incorectă.',
+            $pagina->filter('.alert[role="alert"]')->text(),
+        );
         $this->client->request('GET', '/');
         self::assertResponseRedirects('/autentificare');
     }

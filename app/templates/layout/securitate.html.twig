@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block clasa_body %}layout-securitate{% endblock %}
+
+{% block body %}
+    <main class="pagina-autentificare" data-layout="securitate">
+        <section class="pagina-autentificare__panou" aria-labelledby="titlu-autentificare">
+            <div class="pagina-autentificare__continut">
+                {% block continut_securitate %}{% endblock %}
+            </div>
+        </section>
+
+        <div class="pagina-autentificare__imagine" aria-hidden="true">
+            <img
+                class="pagina-autentificare__imagine-sursa"
+                src="{{ asset('build/images/autentificare-fluidweb.png') }}"
+                alt=""
+            >
+        </div>
+    </main>
+{% endblock %}
