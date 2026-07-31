@@ -1,24 +1,26 @@
+/.env
+/.env.local
 
 ###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
+/backend/.env.local
+/backend/.env.local.php
+/backend/.env.*.local
+/backend/config/secrets/prod/prod.decrypt.private.php
+/backend/public/bundles/
+/backend/var/
+/backend/vendor/
 ###< symfony/framework-bundle ###
 
 ###> friendsofphp/php-cs-fixer ###
-/.php-cs-fixer.php
-/.php-cs-fixer.cache
+/backend/.php-cs-fixer.php
+/backend/.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
 
 ###> phpstan/phpstan ###
-phpstan.neon
+/backend/phpstan.neon
 ###< phpstan/phpstan ###
 
 ###> phpunit/phpunit ###
-/phpunit.xml
-/.phpunit.cache/
+/backend/phpunit.xml
+/backend/.phpunit.cache/
 ###< phpunit/phpunit ###

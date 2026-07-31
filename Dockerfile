@@ -13,7 +13,7 @@ FROM frankenphp_upstream AS frankenphp_base
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-WORKDIR /app
+WORKDIR /app/backend
 
 # persistent deps
 # hadolint ignore=DL3008
@@ -63,7 +63,7 @@ RUN <<-EOF
 	mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 	install-php-extensions xdebug
 	useradd -m -s /bin/bash nonroot
-	git config --system --add safe.directory /app
+	git config --system --add safe.directory /app/backend
 EOF
 
 COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
@@ -80,11 +80,11 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY --link frankenphp/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
 
 # prevent the reinstallation of vendors at every changes in the source code
-COPY --link composer.* symfony.* ./
+COPY --link backend/composer.* backend/symfony.* ./
 RUN composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
-# copy sources
-COPY --link --exclude=frankenphp/ . ./
+# copy backend sources
+COPY --link --exclude=var backend/ ./
 
 RUN <<-EOF
 	mkdir -p var/cache var/log var/share
@@ -141,7 +141,7 @@ COPY --from=frankenphp_prod_builder /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf
 COPY --from=frankenphp_prod_builder /usr/bin/file /usr/bin/file
 COPY --from=frankenphp_prod_builder /usr/lib/file/magic.mgc /usr/lib/file/magic.mgc
 
-ENV  OPENSSL_CONF=/etc/ssl/openssl.cnf XDG_CONFIG_HOME=/config XDG_DATA_HOME=/data SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+ENV OPENSSL_CONF=/etc/ssl/openssl.cnf XDG_CONFIG_HOME=/config XDG_DATA_HOME=/data SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
 RUN <<-EOF
 	mkdir -p /data/caddy /config/caddy
@@ -150,16 +150,16 @@ RUN <<-EOF
 	find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 EOF
 
-COPY --link --exclude=var --from=frankenphp_prod_builder /app /app
+COPY --link --exclude=var --from=frankenphp_prod_builder /app/backend /app/backend
 # Group 0 + g=u for arbitrary-UID runtimes (e.g. OpenShift).
-COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/var /app/var
-RUN chmod g=u /app/var
+COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/backend/var /app/backend/var
+RUN chmod g=u /app/backend/var
 
 COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 
 USER www-data
 
-WORKDIR /app
+WORKDIR /app/backend
 
 ENTRYPOINT ["docker-entrypoint"]
 

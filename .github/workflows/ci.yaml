@@ -117,4 +117,4 @@ jobs:
           # Symfony YAML is validated by Symfony and yamllint above.
           VALIDATE_YAML_PRETTIER: false
           STRIP_DEFAULT_WORKSPACE_FOR_REGEX: true
-          FILTER_REGEX_EXCLUDE: ^config/reference\.php$
+          FILTER_REGEX_EXCLUDE: ^backend/config/reference\.php$

@@ -10,7 +10,7 @@ updates:
       default-days: 7
 
   - package-ecosystem: composer
-    directory: /
+    directory: /backend
     schedule:
       interval: weekly
     commit-message:
