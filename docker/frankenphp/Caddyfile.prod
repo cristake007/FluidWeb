@@ -1,0 +1,37 @@
+{
+	skip_install_trust
+
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
+{$APP_HOST::80} {
+	encode zstd gzip
+
+	mercure {
+		publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
+		subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
+		anonymous
+		subscriptions
+		{$MERCURE_EXTRA_DIRECTIVES}
+	}
+
+	header ?Permissions-Policy "browsing-topics=()"
+
+	handle /api/* {
+		root * /app/backend/public
+		php_server {
+			worker /app/backend/public/index.php
+		}
+	}
+
+	@frontend not path /.well-known/mercure*
+	handle @frontend {
+		root * /app/frontend
+		try_files {path} /index.html
+		file_server
+	}
+}
