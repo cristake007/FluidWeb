@@ -38,7 +38,14 @@ jobs:
           docker compose --profile dev exec -T app-dev php bin/console cache:warmup --env=dev
           docker compose --profile dev exec -T app-dev vendor/bin/phpstan analyse --no-progress --memory-limit=512M
           docker compose --profile dev exec -T app-dev vendor/bin/php-cs-fixer fix --dry-run --diff
-          docker compose --profile dev exec -T app-dev php bin/phpunit
+
+      - name: Prepare test database
+        run: |
+          docker compose --profile dev exec -T app-dev php bin/console doctrine:database:create --env=test --if-not-exists
+          docker compose --profile dev exec -T app-dev php bin/console doctrine:migrations:migrate --env=test --no-interaction --all-or-nothing
+
+      - name: Run backend tests
+        run: docker compose --profile dev exec -T app-dev php bin/phpunit
 
       - name: Validate frontend
         run: |
