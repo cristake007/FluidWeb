@@ -163,26 +163,40 @@
     }
 }
 
-@media (width < 768px) {
+@media (max-width: 767.98px) {
     .pagina-autentificare {
+        width: 100%;
+        min-width: 0;
+
         &__panou {
-            flex-basis: 100%;
+            flex: 1 1 100%;
             width: 100%;
+            min-width: 0;
+            max-width: none;
+            min-height: 100vh;
+            min-height: 100svh;
             padding: 2rem 1.5rem;
             box-shadow: none;
         }
 
         &__continut {
+            width: 100%;
+            max-width: 360px;
             transform: translateY(-2vh);
         }
 
         &__imagine {
             display: none;
         }
+
+        form {
+            width: 100%;
+            max-width: 360px;
+        }
     }
 }
 
-@media (height < 700px) {
+@media (max-height: 699.98px) {
     .pagina-autentificare__continut {
         transform: none;
     }
