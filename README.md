@@ -9,7 +9,7 @@ app/       Symfony Web App and API
 docker/    Runtime configuration
 ```
 
-The application uses Twig, AssetMapper, ImportMap, Stimulus and Symfony UX Turbo. Browser assets are served locally; Node.js is not required.
+The application uses Twig, Webpack Encore, SCSS, Stimulus and Symfony UX Turbo. Browser assets are built locally by the separate Node.js assets service.
 
 The server-rendered web interface uses Symfony form authentication and sessions. The former Angular JSON authentication endpoints have been removed. `/api/v1` remains available for future integrations, but integration authentication is not implemented yet; it will use API keys or another dedicated mechanism, not user passwords or the web login endpoint.
 
@@ -43,8 +43,8 @@ cp .env.example .env
 docker compose --profile prod up --build --wait -d
 ```
 
-The `app_prod` Docker target contains the complete Symfony application, its production dependencies and AssetMapper output compiled into `public/assets/`. Production secrets must be supplied through `.env` or the installer.
+The `app_prod` Docker target contains the complete Symfony application, its production dependencies and Webpack Encore output compiled into `public/build/`. Node.js and `node_modules` are not included in the final image. Production secrets must be supplied through `.env` or the installer.
 
 ## Quality checks
 
-GitHub Actions runs only when started manually. The workflow validates Composer, YAML, Twig, the service container, AssetMapper, PHPStan, PHP-CS-Fixer, Doctrine migrations, PHPUnit, application routes and the production image.
+GitHub Actions runs only when started manually. The workflow validates Composer, the reproducible frontend build, YAML, Twig, the service container, PHPStan, PHP-CS-Fixer, Doctrine migrations, PHPUnit, application routes and the production image.

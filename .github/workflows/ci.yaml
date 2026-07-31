@@ -28,7 +28,12 @@ jobs:
         run: docker compose --profile dev build --pull
 
       - name: Start development services
-        run: docker compose --profile dev up --wait -d
+        run: docker compose --profile dev up --wait -d database app-dev
+
+      - name: Build frontend assets
+        run: |
+          docker compose --profile dev run --rm assets-dev npm ci
+          docker compose --profile dev run --rm assets-dev npm run build
 
       - name: Validate application
         run: |
@@ -36,7 +41,6 @@ jobs:
           docker compose --profile dev exec -T app-dev php bin/console lint:yaml config
           docker compose --profile dev exec -T app-dev php bin/console lint:twig templates
           docker compose --profile dev exec -T app-dev php bin/console lint:container
-          docker compose --profile dev exec -T app-dev php bin/console debug:asset-map
           docker compose --profile dev exec -T app-dev php bin/console cache:warmup --env=dev
           docker compose --profile dev exec -T app-dev vendor/bin/phpstan analyse --no-progress --memory-limit=512M
           docker compose --profile dev exec -T app-dev vendor/bin/php-cs-fixer fix --dry-run --diff
@@ -76,6 +80,16 @@ jobs:
               fwrite(STDERR, "Development classes are autoloadable: ".implode(", ", $autoloadable).PHP_EOL);
               exit(1);
           }
+          '
+
+      - name: Verify production runtime
+        run: |
+          docker compose --profile prod run --rm --no-deps --entrypoint sh app-prod -c '
+          test -f /app/public/build/entrypoints.json
+          test -f /app/public/build/manifest.json
+          test ! -d /app/node_modules
+          ! command -v node
+          ! command -v npm
           '
 
       - name: Stop services

@@ -5,10 +5,11 @@
 /app/.env.local.php
 /app/.env.*.local
 /app/config/secrets/prod/prod.decrypt.private.php
-/app/public/assets/
 /app/public/bundles/
+/app/public/build/
 /app/var/
 /app/vendor/
+/app/node_modules/
 /app/.php-cs-fixer.php
 /app/.php-cs-fixer.cache
 /app/phpstan.neon

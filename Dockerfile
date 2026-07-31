@@ -64,7 +64,6 @@ RUN <<-EOF
 	composer dump-autoload --classmap-authoritative --no-dev
 	composer dump-env prod
 	composer run-script --no-dev post-install-cmd
-	php bin/console asset-map:compile
 	chmod +x bin/console
 	chmod -R g=u var
 	sync
@@ -83,6 +82,16 @@ RUN <<-'EOF'
 	done
 	rm -rf /var/lib/apt/lists/*
 EOF
+
+FROM node:24-alpine AS assets_prod
+
+WORKDIR /app
+
+COPY --link --from=app_prod_builder /app/vendor ./vendor
+COPY --link app/package.json app/package-lock.json app/webpack.config.js ./
+COPY --link app/assets ./assets
+
+RUN npm ci && npm run build
 
 FROM debian:13-slim AS app_prod
 
@@ -110,6 +119,7 @@ COPY --from=app_prod_builder /usr/lib/file/magic.mgc /usr/lib/file/magic.mgc
 
 COPY --link --exclude=var --from=app_prod_builder /app /app
 COPY --chown=www-data:0 --from=app_prod_builder /app/var /app/var
+COPY --link --from=assets_prod /app/public/build /app/public/build
 
 COPY --link docker/frankenphp/Caddyfile.prod /etc/frankenphp/Caddyfile
 COPY --link --chmod=755 docker/frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
