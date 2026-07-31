@@ -19,6 +19,15 @@ class UtilizatorRepository extends ServiceEntityRepository implements PasswordUp
         parent::__construct($registry, Utilizator::class);
     }
 
+    /** @return list<Utilizator> */
+    public function gasestePentruAdministrare(): array
+    {
+        return $this->findBy([], [
+            'nume' => 'ASC',
+            'prenume' => 'ASC',
+        ]);
+    }
+
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof Utilizator) {

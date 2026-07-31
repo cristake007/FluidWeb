@@ -1,0 +1,69 @@
+{% extends 'layout/aplicatie.html.twig' %}
+
+{% block title %}Utilizatori | FluidWeb{% endblock %}
+
+{% block continut_aplicatie %}
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    <ol class="breadcrumb breadcrumb-arrows align-items-center mb-0" aria-label="Navigare ierarhică">
+                        <li class="breadcrumb-item d-flex align-items-center">
+                            <a class="h3 fw-normal mb-0" href="{{ path('administrare') }}">Administrare</a>
+                        </li>
+                        <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
+                            <h1 class="h3 mb-0">Utilizatori</h1>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead>
+                            <tr>
+                                <th>Nume complet</th>
+                                <th>Email</th>
+                                <th>Roluri</th>
+                                <th>Stare</th>
+                                <th>Data creării</th>
+                                <th>Ultima actualizare</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for utilizator in utilizatori %}
+                                <tr>
+                                    <td>{{ utilizator.prenume }} {{ utilizator.nume }}</td>
+                                    <td>{{ utilizator.email }}</td>
+                                    <td>
+                                        {% for rol in utilizator.roles %}
+                                            <span class="badge bg-blue-lt">{{ rol }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% if utilizator.esteActiv() %}
+                                            <span class="badge bg-green-lt">Activ</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary-lt">Inactiv</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-secondary text-nowrap">{{ utilizator.creatLa|date('d.m.Y H:i') }}</td>
+                                    <td class="text-secondary text-nowrap">{{ utilizator.actualizatLa|date('d.m.Y H:i') }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-secondary">Nu există utilizatori.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

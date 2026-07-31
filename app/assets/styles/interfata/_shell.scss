@@ -190,7 +190,13 @@ $culoare-activa: #d41131;
         padding: 1rem 0;
         overflow-y: auto;
 
-        .navbar-nav,
+        .navbar-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+        }
+
         .nav-item,
         .nav-link {
             width: 100%;
