@@ -19,5 +19,19 @@ services:
     App\:
         resource: '../src/'
 
+    App\EvenimentListener\AscultatorLimitareCereriApiV1:
+        arguments:
+            $fabricaLimitatorApiV1: '@limiter.api_v1'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+when@test:
+    services:
+        App\Tests\Controller\Api\V1\ControllerExceptiiFunctionale:
+            autowire: true
+            tags: ['controller.service_arguments']
+
+        App\Tests\Controller\PaginaTestController:
+            autowire: true
+            tags: ['controller.service_arguments']

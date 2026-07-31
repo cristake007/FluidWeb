@@ -14,6 +14,10 @@ parameters:
         - src/
         - tools/
 
+    excludePaths:
+        analyse:
+            - config/reference.php
+
     symfony:
         containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
 

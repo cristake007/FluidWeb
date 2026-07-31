@@ -1,7 +1,6 @@
 /.env
 /.env.local
 
-###> symfony/framework-bundle ###
 /backend/.env.local
 /backend/.env.local.php
 /backend/.env.*.local
@@ -9,18 +8,11 @@
 /backend/public/bundles/
 /backend/var/
 /backend/vendor/
-###< symfony/framework-bundle ###
-
-###> friendsofphp/php-cs-fixer ###
 /backend/.php-cs-fixer.php
 /backend/.php-cs-fixer.cache
-###< friendsofphp/php-cs-fixer ###
-
-###> phpstan/phpstan ###
 /backend/phpstan.neon
-###< phpstan/phpstan ###
-
-###> phpunit/phpunit ###
 /backend/phpunit.xml
 /backend/.phpunit.cache/
-###< phpunit/phpunit ###
+
+/frontend/dist/
+/frontend/node_modules/

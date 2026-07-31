@@ -2,6 +2,17 @@
 framework:
     secret: '%env(APP_SECRET)%'
 
+    rate_limiter:
+        api_v1:
+            policy: fixed_window
+            limit: 60
+            interval: '1 minute'
+            cache_pool: cache.api_v1_limiter
+
+    cache:
+        pools:
+            cache.api_v1_limiter: null
+
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
@@ -11,5 +22,8 @@ framework:
 when@test:
     framework:
         test: true
+        rate_limiter:
+            api_v1:
+                limit: 2
         session:
             storage_factory_id: session.storage.factory.mock_file

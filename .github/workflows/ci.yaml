@@ -2,119 +2,56 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-  pull_request: ~
   workflow_dispatch: ~
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: Tests
+  checks:
+    name: Checks
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-      - name: Build Docker images
-        uses: docker/bake-action@v7
-        with:
-          pull: true
-          load: true
-          source: .
-          files: |
-            compose.yaml
-            compose.override.yaml
-          set: |
-            *.cache-from=type=gha,scope=${{github.ref}}
-            *.cache-from=type=gha,scope=refs/heads/main
-            *.cache-to=type=gha,scope=${{github.ref}},mode=max
-      - name: Start services
-        run: docker compose up --wait --no-build
-      - name: Validate Composer
-        run: docker compose exec -T php composer validate --strict
-      - name: Validate Symfony configuration
-        run: |
-          docker compose exec -T php php bin/console lint:yaml config
-          docker compose exec -T php php bin/console lint:container
-      - name: Run PHPStan
-        run: |
-          docker compose exec -T php php bin/console cache:warmup --env=dev
-          docker compose exec -T php vendor/bin/phpstan analyse --no-progress --memory-limit=512M
-      - name: Check PHP code style
-        run: docker compose exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff
-      - name: Check frontend formatting
-        run: docker compose exec -T frontend npm run format:check
-      - name: Lint frontend
-        run: docker compose exec -T frontend npm run lint
-      - name: Build frontend
-        run: docker compose exec -T frontend npm run build
-      - name: Run frontend tests
-        run: docker compose exec -T frontend npm run test:ci
-      - name: Check HTTP reachability
-        run: curl -v --fail-with-body http://localhost
-      # Uncomment when the homepage is configured, or change the path to check
-      # - name: Check HTTPS reachability
-      #   run: curl -v --insecure --fail-with-body https://localhost
-      - name: Check Mercure reachability
-        run: curl -vI --insecure --fail-with-body https://localhost/.well-known/mercure?topic=test
-      # Uncomment if Doctrine ORM is installed
-      # - name: Create test database
-      #   run: docker compose exec -T php bin/console -e test doctrine:database:create
-      # Uncomment if Doctrine Migrations is installed
-      # - name: Run migrations
-      #   run: docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
-      # Uncomment if PHPUnit is installed
-      # - name: Run PHPUnit
-      #   run: docker compose exec -T php bin/phpunit
-      # Uncomment if Doctrine ORM is installed
-      # - name: Doctrine Schema Validator
-      #   run: docker compose exec -T php bin/console -e test doctrine:schema:validate
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          fetch-depth: 0
           persist-credentials: false
-      - name: Lint Code Base
-        uses: super-linter/super-linter/slim@v8
-        env:
-          GITHUB_ACTIONS_CONFIG_FILE: actionlint.yaml
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          VALIDATE_CHECKOV: false
-          VALIDATE_TRIVY: false
-          VALIDATE_BIOME_FORMAT: false
-          VALIDATE_BIOME_LINT: false
-          # PHP is checked above inside the project's PHP 8.5 container.
-          VALIDATE_PHP_BUILTIN: false
-          VALIDATE_PHP_PHPCS: false
-          VALIDATE_PHP_PHPSTAN: false
-          VALIDATE_PHP_PSALM: false
-          # Angular ESLint runs above with the project's installed dependencies.
-          VALIDATE_TYPESCRIPT_ES: false
-          # Angular templates are checked by Angular ESLint.
-          VALIDATE_HTML: false
-          # Angular tsconfig and VS Code files use valid JSON with comments.
-          VALIDATE_JSON: false
-          # Symfony YAML is validated by Symfony and yamllint above.
-          VALIDATE_YAML_PRETTIER: false
-          STRIP_DEFAULT_WORKSPACE_FOR_REGEX: true
-          FILTER_REGEX_EXCLUDE: ^backend/config/reference\.php$
+
+      - name: Validate Compose
+        run: docker compose --profile dev config --quiet
+
+      - name: Build development images
+        run: docker compose --profile dev build --pull
+
+      - name: Start development services
+        run: docker compose --profile dev up --wait -d
+
+      - name: Validate backend
+        run: |
+          docker compose --profile dev exec -T app-dev composer validate --strict
+          docker compose --profile dev exec -T app-dev php bin/console lint:yaml config
+          docker compose --profile dev exec -T app-dev php bin/console lint:container
+          docker compose --profile dev exec -T app-dev php bin/console cache:warmup --env=dev
+          docker compose --profile dev exec -T app-dev vendor/bin/phpstan analyse --no-progress --memory-limit=512M
+          docker compose --profile dev exec -T app-dev vendor/bin/php-cs-fixer fix --dry-run --diff
+          docker compose --profile dev exec -T app-dev php bin/phpunit
+
+      - name: Validate frontend
+        run: |
+          docker compose --profile dev exec -T frontend-dev npm run format:check
+          docker compose --profile dev exec -T frontend-dev npm run lint
+          docker compose --profile dev exec -T frontend-dev npm run build
+          docker compose --profile dev exec -T frontend-dev npm run test:ci
+
+      - name: Check routes
+        run: |
+          curl --fail-with-body http://localhost/
+          curl --fail-with-body http://localhost/api/v1/stare
+
+      - name: Stop services
+        if: always()
+        run: docker compose --profile dev down --remove-orphans

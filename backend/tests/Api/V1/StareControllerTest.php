@@ -2,13 +2,11 @@
 
 namespace App\Tests\Api\V1;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
-final class StareControllerTest extends WebTestCase
+final class StareControllerTest extends TestFunctionalApiV1
 {
     public function testEndpointulDeStareRaspundeCorect(): void
     {
-        $client = static::createClient();
+        $client = $this->creeazaClientCuLimitatorGol();
 
         $client->request('GET', '/api/v1/stare');
 
