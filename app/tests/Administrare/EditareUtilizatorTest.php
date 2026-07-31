@@ -85,7 +85,12 @@ final class EditareUtilizatorTest extends WebTestCase
 
         self::assertResponseRedirects('/administrare/utilizatori');
         $pagina = $this->client->followRedirect();
-        self::assertSelectorTextContains('.alert.alert-success', 'Utilizatorul a fost actualizat.');
+        self::assertSelectorTextContains('[data-mesaje-flash] .alert.alert-success', 'Utilizatorul a fost actualizat.');
+        self::assertCount(1, $pagina->filter('turbo-frame#continut-aplicatie [data-mesaje-flash][data-turbo-temporary]'));
+
+        $paginaUrmatoare = $this->client->request('GET', '/administrare');
+        self::assertCount(0, $paginaUrmatoare->filter('[data-mesaje-flash]'));
+        self::assertStringNotContainsString('Utilizatorul a fost actualizat.', $paginaUrmatoare->text());
 
         $this->managerEntitati->clear();
         $utilizatorActualizat = $this->utilizatorRepository->find($id);

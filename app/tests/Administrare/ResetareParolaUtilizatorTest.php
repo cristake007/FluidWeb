@@ -130,11 +130,13 @@ final class ResetareParolaUtilizatorTest extends WebTestCase
 
         self::assertRouteSame('administrare_utilizator_parola_resetata');
         self::assertSelectorTextSame('h1', 'Parolă resetată');
-        self::assertSelectorTextContains('.alert', 'Copiați parola acum. Nu va mai fi afișată.');
+        self::assertSelectorTextContains('[data-mesaje-flash] .alert.alert-success', 'Parola utilizatorului a fost resetată.');
+        self::assertSelectorTextContains('.card .alert.alert-warning', 'Copiați parola acum. Nu va mai fi afișată.');
         self::assertStringContainsString('no-store', (string) $this->client->getResponse()->headers->get('cache-control'));
         self::assertStringContainsString('private', (string) $this->client->getResponse()->headers->get('cache-control'));
         self::assertCount(1, $raspuns->filter('meta[name="turbo-cache-control"][content="no-cache"]'));
         self::assertStringNotContainsString($parola, serialize($this->client->getRequest()->getSession()->all()));
+        self::assertStringNotContainsString($parola, $raspuns->filter('[data-mesaje-flash]')->text());
 
         $paginaRefresh = $this->client->request('GET', '/administrare/utilizatori/parola-resetata');
 

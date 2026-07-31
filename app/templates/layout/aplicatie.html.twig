@@ -14,6 +14,7 @@
 
         <main class="shell-aplicatie__continut" id="continut-principal">
             <turbo-frame id="continut-aplicatie" data-turbo-action="advance">
+                {% include 'interfata/_mesaje_flash.html.twig' %}
                 {% block continut_aplicatie %}{% endblock %}
             </turbo-frame>
         </main>

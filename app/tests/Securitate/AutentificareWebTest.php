@@ -53,6 +53,7 @@ final class AutentificareWebTest extends WebTestCase
         self::assertCount(1, $pagina->filter('body.layout-securitate'));
         self::assertCount(1, $pagina->filter('main.pagina-autentificare[data-layout="securitate"]'));
         self::assertCount(1, $pagina->filter('.pagina-autentificare__imagine img[src^="/build/images/"]'));
+        self::assertCount(0, $pagina->filter('[data-mesaje-flash]'));
     }
 
     public function testFormularulContineCampurileNecesare(): void
@@ -259,6 +260,34 @@ final class AutentificareWebTest extends WebTestCase
         self::assertResponseRedirects('/autentificare');
     }
 
+    public function testDeconectareaNuTransferaMesajeleAplicatieiInPaginaDeAutentificare(): void
+    {
+        $administrator = $this->creeazaUtilizator('admin@example.com', 'parola', roluri: ['ROLE_ADMIN']);
+        $id = $administrator->getId();
+        self::assertNotNull($id);
+        $this->trimiteFormularAutentificare('admin@example.com', 'parola');
+        $this->client->followRedirect();
+
+        $paginaEditare = $this->client->request('GET', sprintf('/administrare/utilizatori/%d/editeaza', $id));
+        $tokenDeconectare = $paginaEditare->filter('form[action="/deconectare"] input[name="_csrf_token"]')->attr('value');
+        $formularEditare = $paginaEditare->selectButton('Salvează modificările')->form([
+            'editare_utilizator[prenume]' => 'Admin',
+            'editare_utilizator[nume]' => 'Actualizat',
+            'editare_utilizator[email]' => 'admin@example.com',
+            'editare_utilizator[administrator]' => true,
+            'editare_utilizator[activ]' => true,
+        ]);
+        $this->client->submit($formularEditare);
+        self::assertResponseRedirects('/administrare/utilizatori');
+
+        $this->client->request('POST', '/deconectare', ['_csrf_token' => $tokenDeconectare]);
+        self::assertResponseRedirects('/autentificare');
+        $paginaAutentificare = $this->client->followRedirect();
+
+        self::assertCount(0, $paginaAutentificare->filter('[data-mesaje-flash]'));
+        self::assertStringNotContainsString('Utilizatorul a fost actualizat.', $paginaAutentificare->text());
+    }
+
     public function testDeconectareaFaraCsrfEsteRefuzata(): void
     {
         $this->creeazaUtilizator('admin@example.com', 'parola');
@@ -322,18 +351,20 @@ final class AutentificareWebTest extends WebTestCase
         $this->client->submit($formular, serverParameters: ['REMOTE_ADDR' => $ip]);
     }
 
+    /** @param list<string> $roluri */
     private function creeazaUtilizator(
         string $email,
         string $parola,
         bool $activ = true,
         string $prenume = 'Utilizator',
         string $nume = 'Test',
+        array $roluri = ['ROLE_USER'],
     ): Utilizator {
         $utilizator = (new Utilizator())
             ->setEmail($email)
             ->setPrenume($prenume)
             ->setNume($nume)
-            ->setRoluri(['ROLE_USER'])
+            ->setRoluri($roluri)
             ->setActiv($activ);
         $utilizator->setParola($this->hasherParole->hashPassword($utilizator, $parola));
         $this->managerEntitati->persist($utilizator);

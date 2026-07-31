@@ -76,6 +76,7 @@ final class AdministrareUtilizatoriController extends AbstractController
 
             $request->getSession()->set('parola_utilizator_nou', $parola);
             unset($parola);
+            $this->addFlash('success', 'Utilizatorul a fost creat.');
 
             return $this->redirectToRoute('administrare_utilizator_nou');
         }
@@ -164,6 +165,7 @@ final class AdministrareUtilizatoriController extends AbstractController
 
         $request->getSession()->set(self::CHEIE_PAROLA_RESETATA, $parola);
         unset($parola);
+        $this->addFlash('success', 'Parola utilizatorului a fost resetată.');
 
         return $this->redirectToRoute(
             'administrare_utilizator_parola_resetata',

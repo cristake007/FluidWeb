@@ -122,13 +122,17 @@ final class CreareUtilizatorTest extends WebTestCase
         self::assertResponseRedirects('/administrare/utilizatori/nou');
         $rezultat = $this->client->followRedirect();
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('.alert', 'Copiați parola acum. Nu va mai fi afișată.');
+        self::assertSelectorTextContains('[data-mesaje-flash] .alert.alert-success[role="alert"]', 'Utilizatorul a fost creat.');
+        self::assertCount(1, $rezultat->filter('[data-mesaje-flash] .alert.alert-success.alert-dismissible .ti.ti-circle-check'));
+        self::assertCount(1, $rezultat->filter('[data-mesaje-flash] button.btn-close[data-bs-dismiss="alert"][aria-label="Închide"]'));
+        self::assertSelectorTextContains('.card .alert.alert-warning', 'Copiați parola acum. Nu va mai fi afișată.');
         self::assertCount(1, $rezultat->filter('a.btn[href="/administrare/utilizatori"]'));
         self::assertCount(1, $rezultat->filter('[data-controller="copiere-clipboard"]'));
         self::assertCount(1, $rezultat->filter('button[data-action="copiere-clipboard#copiaza"][aria-label="Copiază parola"] .ti.ti-copy'));
 
         $parola = trim($rezultat->filter('[data-parola-generata]')->text());
         self::assertGreaterThanOrEqual(24, mb_strlen($parola));
+        self::assertStringNotContainsString($parola, $rezultat->filter('[data-mesaje-flash]')->text());
 
         $utilizator = $this->utilizatorRepository->findOneBy(['email' => 'elena@example.com']);
         self::assertNotNull($utilizator);

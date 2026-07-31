@@ -1,0 +1,24 @@
+{% set configuratie_tip = {
+    success: {clasa: 'success', iconita: 'circle-check'},
+    warning: {clasa: 'warning', iconita: 'alert-triangle'},
+    danger: {clasa: 'danger', iconita: 'circle-x'},
+    info: {clasa: 'info', iconita: 'info-circle'},
+} %}
+{% set mesaje_flash = app.flashes %}
+
+{% if mesaje_flash is not empty %}
+    <div class="container-xl mt-3" data-mesaje-flash data-turbo-temporary>
+        {% for tip, mesaje in mesaje_flash %}
+            {% set configuratie = configuratie_tip[tip]|default(configuratie_tip.info) %}
+            {% for mesaj in mesaje %}
+                <div class="alert alert-{{ configuratie.clasa }} alert-dismissible" role="alert">
+                    <div class="d-flex">
+                        <i class="ti ti-{{ configuratie.iconita }} icon alert-icon" aria-hidden="true"></i>
+                        <div>{{ mesaj }}</div>
+                    </div>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Închide"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
