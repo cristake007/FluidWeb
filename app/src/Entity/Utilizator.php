@@ -4,12 +4,15 @@ namespace App\Entity;
 
 use App\Repository\UtilizatorRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UtilizatorRepository::class)]
 #[ORM\Table(name: 'utilizator')]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['email'], message: 'Există deja un utilizator cu această adresă de email.')]
 class Utilizator implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -18,15 +21,22 @@ class Utilizator implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'Completați adresa de email.')]
+    #[Assert\Email(message: 'Introduceți o adresă de email validă.')]
+    #[Assert\Length(max: 180, maxMessage: 'Adresa de email poate avea cel mult {{ limit }} de caractere.')]
     private string $email;
 
     #[ORM\Column(length: 255)]
     private string $parola;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Completați prenumele.')]
+    #[Assert\Length(max: 100, maxMessage: 'Prenumele poate avea cel mult {{ limit }} de caractere.')]
     private string $prenume;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Completați numele.')]
+    #[Assert\Length(max: 100, maxMessage: 'Numele poate avea cel mult {{ limit }} de caractere.')]
     private string $nume;
 
     /** @var list<string> */

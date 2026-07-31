@@ -44,6 +44,9 @@ final class UtilizatoriTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertRouteSame('administrare_utilizatori');
         self::assertSelectorTextSame('h1', 'Utilizatori');
+        self::assertCount(1, $pagina->filter('a.btn.btn-primary.btn-sm[href="/administrare/utilizatori/nou"]'));
+        self::assertCount(1, $pagina->filter('a[href="/administrare/utilizatori/nou"] .ti.ti-user-plus.me-1'));
+        self::assertSelectorTextSame('a.btn[href="/administrare/utilizatori/nou"]', 'Utilizator nou');
         self::assertSelectorTextContains('table', 'Ana Administrator');
         self::assertSelectorTextContains('table', 'admin@example.com');
         self::assertSelectorTextContains('table', 'Mihai Ionescu');

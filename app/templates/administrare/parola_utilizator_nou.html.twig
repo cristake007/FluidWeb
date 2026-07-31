@@ -1,0 +1,68 @@
+{% extends 'layout/aplicatie.html.twig' %}
+
+{% block title %}Utilizator creat | FluidWeb{% endblock %}
+
+{% block continut_aplicatie %}
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    <ol class="breadcrumb breadcrumb-arrows align-items-center mb-0" aria-label="Navigare ierarhică">
+                        <li class="breadcrumb-item d-flex align-items-center">
+                            <a class="h3 fw-normal mb-0" href="{{ path('administrare') }}">Administrare</a>
+                        </li>
+                        <li class="breadcrumb-item d-flex align-items-center">
+                            <a class="h3 fw-normal mb-0" href="{{ path('administrare_utilizatori') }}">Utilizatori</a>
+                        </li>
+                        <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
+                            <h1 class="h3 mb-0">Utilizator creat</h1>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-warning" role="alert">
+                                <div class="d-flex">
+                                    <div>
+                                        <i class="ti ti-alert-triangle icon alert-icon" aria-hidden="true"></i>
+                                    </div>
+                                    <div>Copiați parola acum. Nu va mai fi afișată.</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Parolă generată</label>
+                                <div class="input-group" data-controller="copiere-clipboard">
+                                    <div
+                                        class="form-control font-monospace user-select-all"
+                                        data-parola-generata
+                                        data-copiere-clipboard-target="sursa"
+                                    >{{ parola }}</div>
+                                    <button
+                                        class="btn btn-outline-secondary btn-icon"
+                                        type="button"
+                                        data-action="copiere-clipboard#copiaza"
+                                        aria-label="Copiază parola"
+                                        title="Copiază parola"
+                                    >
+                                        <i class="ti ti-copy" data-copiere-clipboard-target="iconita" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <a class="btn btn-primary" href="{{ path('administrare_utilizatori') }}">Înapoi la utilizatori</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
