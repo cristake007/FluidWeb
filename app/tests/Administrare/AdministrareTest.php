@@ -44,6 +44,8 @@ final class AdministrareTest extends WebTestCase
         self::assertSelectorTextSame('h1', 'Administrare');
         self::assertCount(1, $pagina->filter('a.card[href="/administrare/utilizatori"]'));
         self::assertSelectorTextContains('.card', 'Utilizatori');
+        self::assertCount(1, $pagina->filter('a.card[href="/administrare/branding"]'));
+        self::assertSelectorTextContains('a.card[href="/administrare/branding"]', 'Branding');
     }
 
     public function testAdministratorulVedeAdministrareInainteDeDeconectare(): void

@@ -7,6 +7,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    director_branding: '%kernel.project_dir%/var/branding'
 
 services:
     # default configuration for services in *this* file
@@ -23,10 +24,19 @@ services:
         arguments:
             $fabricaLimitatorApiV1: '@limiter.api_v1'
 
+    App\Serviciu\StocareFisiereBranding:
+        arguments:
+            $directorBranding: '%director_branding%'
+
+    App\Serviciu\InterfataStocareFisiereBranding: '@App\Serviciu\StocareFisiereBranding'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
 when@test:
+    parameters:
+        director_branding: '%kernel.cache_dir%/branding'
+
     services:
         App\Tests\Controller\Api\V1\ControllerExceptiiFunctionale:
             autowire: true
@@ -39,3 +49,10 @@ when@test:
         App\Tests\Controller\Api\V1\ControlerAutorizareFunctionala:
             autowire: true
             tags: ['controller.service_arguments']
+
+        App\Tests\Dublura\StocareFisiereBrandingControlata:
+            public: true
+            arguments:
+                $stocareReala: '@App\Serviciu\StocareFisiereBranding'
+
+        App\Serviciu\InterfataStocareFisiereBranding: '@App\Tests\Dublura\StocareFisiereBrandingControlata'
