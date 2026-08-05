@@ -19,3 +19,9 @@ jobs:
       - run: cargo clippy --features ssr --all-targets -- -D warnings
       - run: cargo check --no-default-features --features hydrate --lib --target wasm32-unknown-unknown --future-incompat-report
       - run: cargo fmt --all -- --check
+
+  development-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build --file Dockerfile.dev --tag fluidweb-development:test .
