@@ -2,7 +2,7 @@
 FROM rust:1.97.1-slim-trixie AS build
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl pkg-config libssl-dev nodejs npm && rm -rf /var/lib/apt/lists/*
-RUN rustup target add wasm32-unknown-unknown && cargo install cargo-leptos --locked
+RUN rustup target add wasm32-unknown-unknown && OPENSSL_NO_VENDOR=1 cargo install cargo-leptos --version 0.3.6 --locked
 COPY package.json ./
 RUN npm install
 COPY . .
