@@ -16,13 +16,10 @@ services:
       - "127.0.0.1:5432:5432"
 
   app:
-    image: rust:1.97.1-trixie
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     working_dir: /app
-    command: >-
-      bash -lc "apt-get update && apt-get install -y nodejs npm pkg-config libssl-dev &&
-      rustup target add wasm32-unknown-unknown &&
-      command -v cargo-leptos >/dev/null || cargo install cargo-leptos --locked &&
-      npm install && npm run css:build && cargo leptos watch"
     environment:
       DATABASE_URL: postgres://fluidweb:fluidweb@database:5432/fluidweb
       LEPTOS_SITE_ADDR: 0.0.0.0:3000
