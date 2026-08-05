@@ -1,5 +1,5 @@
-use leptos::prelude::*;
 use crate::components::ui::Button;
+use leptos::prelude::*;
 
 #[component]
 pub fn LoginPage() -> impl IntoView {
@@ -9,13 +9,17 @@ pub fn LoginPage() -> impl IntoView {
     let pending = RwSignal::new(false);
 
     let submit = move |_| {
-        let Some(email) = email.get() else { return; };
-        let Some(password) = password.get() else { return; };
-        let email = email.value();
-        let password = password.value();
-
         #[cfg(feature = "hydrate")]
         {
+            let Some(email) = email.get() else {
+                return;
+            };
+            let Some(password) = password.get() else {
+                return;
+            };
+            let email = email.value();
+            let password = password.value();
+
             pending.set(true);
             message.set(String::new());
             wasm_bindgen_futures::spawn_local(async move {
@@ -24,16 +28,16 @@ pub fn LoginPage() -> impl IntoView {
                     "variables": { "email": email, "password": password }
                 });
 
-                let result = gloo_net::http::Request::post("/graphql")
+                let request = gloo_net::http::Request::post("/graphql")
                     .header("Content-Type", "application/json")
                     .json(&body)
-                    .and_then(|request| Ok(request))
                     .map_err(|error| error.to_string());
 
-                match result {
+                match request {
                     Ok(request) => match request.send().await {
                         Ok(response) => {
-                            let value: serde_json::Value = response.json().await.unwrap_or_default();
+                            let value: serde_json::Value =
+                                response.json().await.unwrap_or_default();
                             if value.get("errors").is_some() {
                                 message.set("Invalid credentials or inactive account.".into());
                             } else if let Some(window) = web_sys::window() {
@@ -69,7 +73,7 @@ pub fn LoginPage() -> impl IntoView {
                     <Show when=move || !message.get().is_empty()>
                         <p class="text-sm text-[#d41131]">{move || message.get()}</p>
                     </Show>
-                    <Button attr:type="button" on:click=submit attr:disabled=move || pending.get()>
+                    <Button attr:r#type="button" on:click=submit attr:disabled=move || pending.get()>
                         {move || if pending.get() { "Signing in…" } else { "Sign in" }}
                     </Button>
                 </div>
