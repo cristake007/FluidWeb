@@ -1,6 +1,6 @@
 use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
-use rand_core::OsRng;
+use rand_core::{OsRng, RngCore};
 use sha2::{Digest, Sha256};
 
 pub const SESSION_COOKIE: &str = "fluid_session";
@@ -26,11 +26,10 @@ pub fn verify_password(password: &str, encoded: &str) -> bool {
 }
 
 pub fn new_session_token() -> String {
-    format!(
-        "{}{}",
-        uuid::Uuid::new_v4().simple(),
-        uuid::Uuid::new_v4().simple()
-    )
+    let mut token = [0_u8; 32];
+    let mut rng = OsRng;
+    rng.fill_bytes(&mut token);
+    hex::encode(token)
 }
 
 pub fn token_hash(token: &str) -> String {
