@@ -18,4 +18,5 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo clippy --features ssr --all-targets -- -D warnings
       - run: cargo check --no-default-features --features hydrate --lib --target wasm32-unknown-unknown --future-incompat-report
+      - run: cargo report future-incompatibilities --id 1 --package proc-macro-error2@2.0.1
       - run: cargo fmt --all -- --check
