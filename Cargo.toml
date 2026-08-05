@@ -8,10 +8,10 @@ rust-version = "1.97.1"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-leptos = { version = "0.8.20" }
-leptos_router = { version = "0.8.20" }
-leptos_meta = { version = "0.8.20" }
-leptos_ui = "0.3.22"
+leptos = { version = "=0.8.20" }
+leptos_router = { version = "=0.8.14" }
+leptos_meta = { version = "=0.8.6" }
+leptos_ui = "=0.3.22"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 uuid = { version = "1", features = ["v4", "serde"] }
@@ -22,12 +22,12 @@ wasm-bindgen-futures = { version = "0.4", optional = true }
 gloo-net = { version = "0.6", optional = true, features = ["http"] }
 web-sys = { version = "0.3", optional = true, features = ["HtmlInputElement", "Location", "Window"] }
 
-axum = { version = "0.8.9", optional = true }
-axum-extra = { version = "0.12.6", optional = true, features = ["cookie"] }
-leptos_axum = { version = "0.8.20", optional = true }
-async-graphql = { version = "7.2.1", optional = true, features = ["chrono", "graphiql", "uuid"] }
-async-graphql-axum = { version = "7.2.1", optional = true }
-sqlx = { version = "0.9.0", optional = true, features = ["runtime-tokio", "tls-rustls-ring", "postgres", "uuid", "chrono", "migrate"] }
+axum = { version = "=0.8.9", optional = true }
+axum-extra = { version = "=0.12.6", optional = true, features = ["cookie"] }
+leptos_axum = { version = "=0.8.10", optional = true }
+async-graphql = { version = "=7.2.1", optional = true, features = ["chrono", "graphiql", "uuid"] }
+async-graphql-axum = { version = "=7.2.1", optional = true }
+sqlx = { version = "=0.9.0", optional = true, features = ["runtime-tokio", "tls-rustls-ring", "postgres", "uuid", "chrono", "migrate"] }
 tokio = { version = "1", optional = true, features = ["macros", "rt-multi-thread", "signal"] }
 tower-http = { version = "0.6", optional = true, features = ["compression-gzip", "trace"] }
 tracing = { version = "0.1", optional = true }
