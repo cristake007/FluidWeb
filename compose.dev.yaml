@@ -1,0 +1,47 @@
+services:
+  database:
+    image: postgres:18.4-trixie
+    environment:
+      POSTGRES_DB: fluidweb
+      POSTGRES_USER: fluidweb
+      POSTGRES_PASSWORD: fluidweb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fluidweb -d fluidweb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - fluidweb-db:/var/lib/postgresql
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  app:
+    image: rust:1.97.1-trixie
+    working_dir: /app
+    command: >-
+      bash -lc "apt-get update && apt-get install -y nodejs npm pkg-config libssl-dev &&
+      rustup target add wasm32-unknown-unknown &&
+      command -v cargo-leptos >/dev/null || cargo install cargo-leptos --locked &&
+      npm install && npm run css:build && cargo leptos watch"
+    environment:
+      DATABASE_URL: postgres://fluidweb:fluidweb@database:5432/fluidweb
+      LEPTOS_SITE_ADDR: 0.0.0.0:3000
+      COOKIE_SECURE: "false"
+      RUST_LOG: fluidweb=debug,tower_http=info
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - cargo-registry:/usr/local/cargo/registry
+      - cargo-target:/app/target
+      - node-modules:/app/node_modules
+    ports:
+      - "0.0.0.0:3000:3000"
+      - "127.0.0.1:3001:3001"
+
+volumes:
+  fluidweb-db:
+  cargo-registry:
+  cargo-target:
+  node-modules:

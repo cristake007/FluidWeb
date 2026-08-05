@@ -1,0 +1,14 @@
+{
+  "name": "fluidweb-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "css:build": "tailwindcss -i ./style/tailwind.css -o ./style/main.css --minify",
+    "css:watch": "tailwindcss -i ./style/tailwind.css -o ./style/main.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.13",
+    "tailwindcss": "^4.1.13",
+    "tw-animate-css": "^1.3.8"
+  }
+}

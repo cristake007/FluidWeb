@@ -1,0 +1,21 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [rust-rewrite]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.97.1
+          targets: wasm32-unknown-unknown
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --features ssr --all-targets -- -D warnings
+      - run: cargo check --no-default-features --features hydrate --lib --target wasm32-unknown-unknown

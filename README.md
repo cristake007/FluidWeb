@@ -1,50 +1,41 @@
-# FluidWeb
+# FluidWeb — Rust rewrite
 
-FluidWeb is an internal platform built as a server-rendered Symfony Web App with FrankenPHP, PostgreSQL and Mercure.
+Full-stack Rust foundation for the FluidWeb internal operations platform.
 
-## Structure
+## Stack
 
-```text
-app/       Symfony Web App and API
-docker/    Runtime configuration
-```
-
-The application uses Twig, Webpack Encore, SCSS, Stimulus and Symfony UX Turbo. Browser assets are built locally by the separate Node.js assets service.
-
-The server-rendered web interface uses Symfony form authentication and sessions. The former Angular JSON authentication endpoints have been removed. `/api/v1` remains available for future integrations, but integration authentication is not implemented yet; it will use API keys or another dedicated mechanism, not user passwords or the web login endpoint.
+- Leptos 0.8 with SSR and hydration
+- Rust/UI source-owned components and Tailwind CSS 4
+- Axum 0.8
+- async-graphql 7
+- SQLx 0.9 and PostgreSQL 18
+- Argon2 password hashing and database-backed session cookies
 
 ## Development
 
-Start the development profile:
-
 ```bash
-docker compose --profile dev up --build --wait -d
+cp .env.example .env
+docker compose -f compose.dev.yaml up --build
 ```
 
-Open `http://localhost`. FrankenPHP serves static assets directly and sends application routes to Symfony.
+Open `http://SERVER_IP:3000`. GraphiQL is available at `/graphql` during this foundation stage.
 
-Useful commands:
+## Create the first administrator
 
 ```bash
-docker compose --profile dev ps
-docker compose --profile dev logs -f app-dev
-docker compose --profile dev exec app-dev php bin/console
-docker compose --profile dev down --remove-orphans
+docker compose -f compose.dev.yaml exec app cargo run --features ssr -- create-admin admin@example.com Cristian Popa 'replace-this-password'
 ```
 
-PostgreSQL is available only inside the Docker network.
-
-## Production image
-
-Build and start the local production profile:
+## Production
 
 ```bash
 cp .env.example .env
-docker compose --profile prod up --build --wait -d
+# Replace all example secrets.
+docker compose -f compose.prod.yaml up -d --build
 ```
 
-The `app_prod` Docker target contains the complete Symfony application, its production dependencies and Webpack Encore output compiled into `public/build/`. Node.js and `node_modules` are not included in the final image. Production secrets must be supplied through `.env` or the installer.
+The production app binds to `127.0.0.1:3000` for a host reverse proxy. PostgreSQL is private to the Compose network.
 
-## Quality checks
+## Current scope
 
-GitHub Actions runs only when started manually. The workflow validates Composer, the reproducible frontend build, YAML, Twig, the service container, PHPStan, PHP-CS-Fixer, Doctrine migrations, PHPUnit, application routes and the production image.
+This branch establishes the complete runtime architecture and the first authentication vertical slice. The remaining FluidWeb business modules must be migrated incrementally rather than mechanically translated from PHP.
