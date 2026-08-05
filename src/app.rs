@@ -1,6 +1,9 @@
 use leptos::prelude::*;
-use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
-use leptos_router::{components::{Route, Router, Routes}, path};
+use leptos_meta::{MetaTags, Stylesheet, Title, provide_meta_context};
+use leptos_router::{
+    components::{Route, Router, Routes},
+    path,
+};
 
 use crate::pages::{DashboardPage, LoginPage, NotFoundPage};
 
@@ -28,8 +31,8 @@ pub fn shell(options: leptos::config::LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <leptos_meta::AutoReload options=options.clone() />
-                <leptos_meta::HydrationScripts options />
+                <AutoReload options=options.clone() />
+                <HydrationScripts options />
                 <MetaTags />
             </head>
             <body><App /></body>
