@@ -112,3 +112,11 @@ button:not(:disabled),
 [role="button"]:not(:disabled) {
   cursor: pointer;
 }
+
+details > summary svg {
+  transition: transform 150ms ease;
+}
+
+details[open] > summary svg {
+  transform: rotate(180deg);
+}
