@@ -17,7 +17,7 @@ async fn main() -> anyhow::Result<()> {
 
     let args: Vec<String> = std::env::args().collect();
     if args.get(1).map(String::as_str) == Some("create-admin") {
-        if args.len() != 7 { anyhow::bail!("usage: fluidweb create-admin <email> <first-name> <last-name> <password>"); }
+        if args.len() != 6 { anyhow::bail!("usage: fluidweb create-admin <email> <first-name> <last-name> <password>"); }
         graphql::create_admin(&pool, &args[2], &args[3], &args[4], &args[5]).await?;
         println!("Administrator account created or updated.");
         return Ok(());
