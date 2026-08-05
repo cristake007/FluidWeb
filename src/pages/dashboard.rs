@@ -1,5 +1,5 @@
-use leptos::prelude::*;
 use crate::components::layout::AppShell;
+use leptos::prelude::*;
 
 #[component]
 pub fn DashboardPage() -> impl IntoView {

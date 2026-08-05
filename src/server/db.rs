@@ -1,5 +1,5 @@
 use anyhow::Context;
-use sqlx::{postgres::PgPoolOptions, PgPool};
+use sqlx::{PgPool, postgres::PgPoolOptions};
 
 pub async fn connect() -> anyhow::Result<PgPool> {
     let url = std::env::var("DATABASE_URL").context("DATABASE_URL is required")?;

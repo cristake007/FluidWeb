@@ -18,5 +18,7 @@ pub struct AppState {
 }
 
 impl FromRef<AppState> for LeptosOptions {
-    fn from_ref(state: &AppState) -> Self { state.leptos_options.clone() }
+    fn from_ref(state: &AppState) -> Self {
+        state.leptos_options.clone()
+    }
 }
