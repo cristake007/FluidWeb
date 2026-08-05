@@ -106,7 +106,7 @@ async fn main() -> anyhow::Result<()> {
             let options = leptos_options.clone();
             move || shell(options.clone())
         })
-        .fallback(leptos_axum::file_and_error_handler(shell))
+        .fallback(leptos_axum::file_and_error_handler::<AppState, _>(shell))
         .layer(CompressionLayer::new())
         .layer(TraceLayer::new_for_http())
         .with_state(state);
