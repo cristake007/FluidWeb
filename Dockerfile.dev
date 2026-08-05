@@ -15,6 +15,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN rustup target add wasm32-unknown-unknown \
-    && cargo install cargo-leptos --version 0.3.6 --locked
+    && OPENSSL_NO_VENDOR=1 cargo install cargo-leptos --version 0.3.6 --locked
 
 CMD ["bash", "-c", "npm install && npm run css:build && exec cargo leptos watch"]
